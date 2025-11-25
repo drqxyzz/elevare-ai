@@ -7,6 +7,7 @@ import { Sparkles, Menu, X } from 'lucide-react';
 import { useState } from 'react';
 
 import { ModeToggle } from '@/components/mode-toggle';
+import { UserMenu } from '@/components/layout/UserMenu';
 
 export function Navbar() {
     const { user, isLoading } = useUser();
@@ -40,9 +41,7 @@ export function Navbar() {
                                     <Link href="/dashboard">
                                         <Button variant="ghost">Dashboard</Button>
                                     </Link>
-                                    <Link href="/api/auth/logout">
-                                        <Button variant="outline">Log Out</Button>
-                                    </Link>
+                                    <UserMenu />
                                 </>
                             ) : (
                                 <>
@@ -65,37 +64,39 @@ export function Navbar() {
             </div>
 
             {/* Mobile Nav */}
-            {isMenuOpen && (
-                <div className="md:hidden border-t p-4 space-y-4 bg-background">
-                    <Link href="/#features" className="block text-muted-foreground hover:text-foreground" onClick={() => setIsMenuOpen(false)}>
-                        Features
-                    </Link>
-                    <Link href="/#pricing" className="block text-muted-foreground hover:text-foreground" onClick={() => setIsMenuOpen(false)}>
-                        Pricing
-                    </Link>
-                    <div className="pt-4 border-t space-y-2">
-                        {!isLoading && user ? (
-                            <>
-                                <Link href="/dashboard" onClick={() => setIsMenuOpen(false)}>
-                                    <Button className="w-full" variant="ghost">Dashboard</Button>
-                                </Link>
-                                <Link href="/api/auth/logout" onClick={() => setIsMenuOpen(false)}>
-                                    <Button className="w-full" variant="outline">Log Out</Button>
-                                </Link>
-                            </>
-                        ) : (
-                            <>
-                                <Link href="/api/auth/login" onClick={() => setIsMenuOpen(false)}>
-                                    <Button className="w-full" variant="ghost">Log In</Button>
-                                </Link>
-                                <Link href="/api/auth/login?screen_hint=signup" onClick={() => setIsMenuOpen(false)}>
-                                    <Button className="w-full">Get Started</Button>
-                                </Link>
-                            </>
-                        )}
+            {
+                isMenuOpen && (
+                    <div className="md:hidden border-t p-4 space-y-4 bg-background">
+                        <Link href="/#features" className="block text-muted-foreground hover:text-foreground" onClick={() => setIsMenuOpen(false)}>
+                            Features
+                        </Link>
+                        <Link href="/#pricing" className="block text-muted-foreground hover:text-foreground" onClick={() => setIsMenuOpen(false)}>
+                            Pricing
+                        </Link>
+                        <div className="pt-4 border-t space-y-2">
+                            {!isLoading && user ? (
+                                <>
+                                    <Link href="/dashboard" onClick={() => setIsMenuOpen(false)}>
+                                        <Button className="w-full" variant="ghost">Dashboard</Button>
+                                    </Link>
+                                    <Link href="/api/auth/logout" onClick={() => setIsMenuOpen(false)}>
+                                        <Button className="w-full" variant="outline">Log Out</Button>
+                                    </Link>
+                                </>
+                            ) : (
+                                <>
+                                    <Link href="/api/auth/login" onClick={() => setIsMenuOpen(false)}>
+                                        <Button className="w-full" variant="ghost">Log In</Button>
+                                    </Link>
+                                    <Link href="/api/auth/login?screen_hint=signup" onClick={() => setIsMenuOpen(false)}>
+                                        <Button className="w-full">Get Started</Button>
+                                    </Link>
+                                </>
+                            )}
+                        </div>
                     </div>
-                </div>
-            )}
-        </nav>
+                )
+            }
+        </nav >
     );
 }

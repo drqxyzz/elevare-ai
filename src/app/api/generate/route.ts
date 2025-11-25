@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { model } from '@/lib/ai/gemini';
+import { scrapeUrl } from '@/lib/scraper';
 import { getOrCreateUser, incrementUsage, saveGeneratedPost } from '@/lib/db/actions';
 import { auth0 } from '@/lib/auth0';
 
@@ -24,12 +25,31 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: 'Free limit reached', limitReached: true }, { status: 403 });
         }
 
+        // Scrape URL if provided
+        let scrapedContent = '';
+        if (url) {
+            try {
+                const scraped = await scrapeUrl(url);
+                if (scraped) {
+                    scrapedContent = scraped;
+                } else {
+                    console.warn(`Failed to scrape URL: ${url}`);
+                }
+            } catch (e) {
+                console.error(`Error scraping URL: ${url}`, e);
+            }
+        }
+
         // AI Generation
         const prompt = `
       Act as a professional social media marketing expert.
       I need you to generate content for a LinkedIn and Twitter post.
       
-      Context/Input: ${url ? `URL: ${url}` : `Text: ${text}`}
+      Context/Input:
+      ${scrapedContent ? `Source Content:\n${scrapedContent}` : `Text:\n${text}`}
+      
+      ${url ? `Original URL: ${url}` : ''}
+      
       Purpose/Goal: ${purpose}
       
       Please generate:
