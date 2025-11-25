@@ -1,65 +1,310 @@
-import Image from "next/image";
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Navbar } from '@/components/layout/Navbar';
+import { Footer } from '@/components/layout/Footer';
+import {
+  Sparkles,
+  ArrowRight,
+  Target,
+  Layout,
+  Lightbulb,
+  ClipboardList,
+  Settings2,
+  CheckCircle2,
+  Star
+} from 'lucide-react';
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+    <div className="min-h-screen flex flex-col bg-background text-foreground transition-colors duration-300">
+      <Navbar />
+
+      <main className="flex-1">
+        {/* Hero Section */}
+        <section className="relative py-24 md:py-32 overflow-hidden">
+          {/* Background Gradient */}
+          <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/20 via-background to-background dark:from-primary/10"></div>
+
+          <div className="container mx-auto px-4 text-center relative z-10">
+            <div className="inline-flex items-center gap-2 bg-muted/50 backdrop-blur-sm border border-border px-4 py-1.5 rounded-full text-sm font-medium mb-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <Sparkles className="w-4 h-4 text-primary" />
+              <span>AI-Powered Marketing Assistant</span>
+            </div>
+
+            <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-6 max-w-4xl mx-auto bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70 animate-in fade-in slide-in-from-bottom-6 duration-700 delay-100">
+              Elevate Your Brand with <br className="hidden md:block" />
+              <span className="text-primary">AI-Powered Marketing</span>
+            </h1>
+
+            <p className="text-xl text-muted-foreground mb-10 max-w-2xl mx-auto animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200">
+              Generate viral social media content, professional headers, and actionable marketing strategies in seconds.
+            </p>
+
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-in fade-in slide-in-from-bottom-10 duration-700 delay-300">
+              <Link href="/dashboard">
+                <Button size="lg" className="h-14 px-8 text-lg rounded-full shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all">
+                  Get Started for Free <ArrowRight className="ml-2 w-5 h-5" />
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        {/* Everything You Need Section */}
+        <section id="features" className="py-24 bg-muted/30">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">Everything You Need</h2>
+              <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+                Comprehensive tools to elevate your brand and streamline your content creation.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <Card className="border-border/50 bg-card/50 backdrop-blur-sm hover:bg-card hover:shadow-lg transition-all duration-300">
+                <CardHeader>
+                  <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-4 text-primary">
+                    <Target className="w-6 h-6" />
+                  </div>
+                  <CardTitle className="text-xl">Marketing Strategy</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground">
+                    Get 3 unique, actionable marketing strategies tailored to your niche and goals.
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card className="border-border/50 bg-card/50 backdrop-blur-sm hover:bg-card hover:shadow-lg transition-all duration-300">
+                <CardHeader>
+                  <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-4 text-primary">
+                    <Layout className="w-6 h-6" />
+                  </div>
+                  <CardTitle className="text-xl">Social Headers</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground">
+                    Professional headers for Twitter and LinkedIn that capture attention instantly.
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card className="border-border/50 bg-card/50 backdrop-blur-sm hover:bg-card hover:shadow-lg transition-all duration-300">
+                <CardHeader>
+                  <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-4 text-primary">
+                    <Lightbulb className="w-6 h-6" />
+                  </div>
+                  <CardTitle className="text-xl">Content Ideas</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground">
+                    Never run out of ideas with 5 AI-generated post suggestions optimized for engagement.
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </section>
+
+        {/* How It Works Section */}
+        <section id="how-it-works" className="py-24 bg-background">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">How It Works</h2>
+              <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+                From idea to viral post in three simple steps.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-12 relative">
+              {/* Connecting Line (Desktop) */}
+              <div className="hidden md:block absolute top-12 left-[16%] right-[16%] h-0.5 bg-gradient-to-r from-border via-primary/20 to-border -z-10"></div>
+
+              <div className="flex flex-col items-center text-center group">
+                <div className="w-24 h-24 bg-background border-2 border-border rounded-full flex items-center justify-center mb-6 group-hover:border-primary transition-colors shadow-sm">
+                  <ClipboardList className="w-10 h-10 text-muted-foreground group-hover:text-primary transition-colors" />
+                </div>
+                <h3 className="text-xl font-semibold mb-3">1. Input Context</h3>
+                <p className="text-muted-foreground">
+                  Paste a URL or enter manual text about your topic or business.
+                </p>
+              </div>
+
+              <div className="flex flex-col items-center text-center group">
+                <div className="w-24 h-24 bg-background border-2 border-border rounded-full flex items-center justify-center mb-6 group-hover:border-primary transition-colors shadow-sm">
+                  <Settings2 className="w-10 h-10 text-muted-foreground group-hover:text-primary transition-colors" />
+                </div>
+                <h3 className="text-xl font-semibold mb-3">2. Select Purpose</h3>
+                <p className="text-muted-foreground">
+                  Define your goal (e.g., &quot;Launch Product&quot;, &quot;Thought Leadership&quot;).
+                </p>
+              </div>
+
+              <div className="flex flex-col items-center text-center group">
+                <div className="w-24 h-24 bg-background border-2 border-border rounded-full flex items-center justify-center mb-6 group-hover:border-primary transition-colors shadow-sm">
+                  <Sparkles className="w-10 h-10 text-muted-foreground group-hover:text-primary transition-colors" />
+                </div>
+                <h3 className="text-xl font-semibold mb-3">3. Generate</h3>
+                <p className="text-muted-foreground">
+                  Get instant titles, headlines, and post suggestions ready to share.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* What You Get Section (MacBook Style) */}
+        <section className="py-24 bg-muted/30">
+          <div className="container mx-auto px-4">
+            <div className="max-w-4xl mx-auto">
+              <div className="text-center mb-12">
+                <h2 className="text-3xl md:text-4xl font-bold mb-4">See It In Action</h2>
+                <p className="text-muted-foreground text-lg">
+                  High-quality output designed for professional use.
+                </p>
+              </div>
+
+              <div className="relative rounded-xl bg-background shadow-2xl border border-border overflow-hidden">
+                {/* Window Controls */}
+                <div className="bg-muted/50 border-b border-border px-4 py-3 flex items-center gap-2">
+                  <div className="w-3 h-3 rounded-full bg-red-500/80"></div>
+                  <div className="w-3 h-3 rounded-full bg-yellow-500/80"></div>
+                  <div className="w-3 h-3 rounded-full bg-green-500/80"></div>
+                </div>
+
+                {/* Window Content */}
+                <div className="p-6 md:p-8 space-y-6">
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-2 text-primary font-medium">
+                      <CheckCircle2 className="w-5 h-5" />
+                      <span>Generated Titles</span>
+                    </div>
+                    <div className="grid gap-3">
+                      <div className="p-3 bg-muted/30 rounded-lg border border-border/50 text-sm md:text-base">
+                        &quot;5 Ways AI is Revolutionizing Digital Marketing in 2024&quot;
+                      </div>
+                      <div className="p-3 bg-muted/30 rounded-lg border border-border/50 text-sm md:text-base">
+                        &quot;Why Your Brand Needs an AI Strategy Today&quot;
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-2 text-primary font-medium">
+                      <CheckCircle2 className="w-5 h-5" />
+                      <span>Post Suggestion</span>
+                    </div>
+                    <div className="p-4 bg-muted/30 rounded-lg border border-border/50 text-sm md:text-base leading-relaxed text-muted-foreground">
+                      <p className="mb-2"><span className="font-semibold text-foreground">Hook:</span> Are you still manually writing every social post? You might be falling behind.</p>
+                      <p className="mb-2"><span className="font-semibold text-foreground">Body:</span> AI isn&apos;t here to replace creativity; it&apos;s here to amplify it. By automating the brainstorming process, you can focus on strategy and engagement...</p>
+                      <p><span className="font-semibold text-foreground">CTA:</span> What&apos;s your biggest challenge with content creation? Let me know below! 👇</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Testimonials Section */}
+        <section className="py-24 bg-background">
+          <div className="container mx-auto px-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-center mb-16">Trusted by Creators</h2>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <Card className="bg-muted/20 border-none shadow-sm">
+                <CardContent className="pt-6">
+                  <div className="flex gap-1 text-yellow-500 mb-4">
+                    <Star className="w-4 h-4 fill-current" />
+                    <Star className="w-4 h-4 fill-current" />
+                    <Star className="w-4 h-4 fill-current" />
+                    <Star className="w-4 h-4 fill-current" />
+                    <Star className="w-4 h-4 fill-current" />
+                  </div>
+                  <p className="text-muted-foreground mb-6 italic">
+                    &quot;Elevare AI has completely transformed my LinkedIn workflow. I used to spend hours brainstorming, now it takes minutes.&quot;
+                  </p>
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center text-white font-bold">
+                      SJ
+                    </div>
+                    <div>
+                      <div className="font-semibold">Sarah Jenkins</div>
+                      <div className="text-xs text-muted-foreground">Marketing Director</div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-muted/20 border-none shadow-sm">
+                <CardContent className="pt-6">
+                  <div className="flex gap-1 text-yellow-500 mb-4">
+                    <Star className="w-4 h-4 fill-current" />
+                    <Star className="w-4 h-4 fill-current" />
+                    <Star className="w-4 h-4 fill-current" />
+                    <Star className="w-4 h-4 fill-current" />
+                    <Star className="w-4 h-4 fill-current" />
+                  </div>
+                  <p className="text-muted-foreground mb-6 italic">
+                    &quot;The headline variations are a game changer. My engagement rate has doubled since I started using these suggestions.&quot;
+                  </p>
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center text-white font-bold">
+                      MR
+                    </div>
+                    <div>
+                      <div className="font-semibold">Mike Ross</div>
+                      <div className="text-xs text-muted-foreground">Founder, TechStart</div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-muted/20 border-none shadow-sm">
+                <CardContent className="pt-6">
+                  <div className="flex gap-1 text-yellow-500 mb-4">
+                    <Star className="w-4 h-4 fill-current" />
+                    <Star className="w-4 h-4 fill-current" />
+                    <Star className="w-4 h-4 fill-current" />
+                    <Star className="w-4 h-4 fill-current" />
+                    <Star className="w-4 h-4 fill-current" />
+                  </div>
+                  <p className="text-muted-foreground mb-6 italic">
+                    &quot;Simple, clean, and effective. Exactly what I needed to keep my personal brand active while running my business.&quot;
+                  </p>
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center text-white font-bold">
+                      AL
+                    </div>
+                    <div>
+                      <div className="font-semibold">Alex Lee</div>
+                      <div className="text-xs text-muted-foreground">Freelance Consultant</div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </section>
+
+        {/* Final CTA Section */}
+        <section className="py-24 bg-gradient-to-b from-background to-primary/5">
+          <div className="container mx-auto px-4 text-center">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">Elevate Your Brand Today</h2>
+            <p className="text-xl text-muted-foreground mb-10 max-w-2xl mx-auto">
+              Join the new wave of creators using AI to build their audience faster.
+            </p>
+            <Link href="/dashboard">
+              <Button size="lg" className="h-14 px-10 text-lg rounded-full shadow-xl shadow-primary/20 hover:shadow-primary/30 transition-all">
+                Get Started for Free <ArrowRight className="ml-2 w-5 h-5" />
+              </Button>
+            </Link>
+          </div>
+        </section>
       </main>
+
+      <Footer />
     </div>
   );
 }
