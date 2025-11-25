@@ -16,5 +16,7 @@ CREATE TABLE IF NOT EXISTS generated_posts (
   titles JSONB, -- Array of strings
   headlines JSONB, -- Array of strings
   suggestions TEXT,
+  is_flagged BOOLEAN DEFAULT FALSE,
+  flag_reason TEXT,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );

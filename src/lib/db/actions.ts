@@ -53,3 +53,67 @@ export async function getUserPosts(userId: number) {
         client.release();
     }
 }
+
+// --- Admin Actions ---
+
+export async function getAllUsers() {
+    const client = await pool.connect();
+    try {
+        const res = await client.query('SELECT * FROM users ORDER BY created_at DESC');
+        return res.rows;
+    } finally {
+        client.release();
+    }
+}
+
+export async function updateUserRole(userId: number, role: string) {
+    const client = await pool.connect();
+    try {
+        const res = await client.query('UPDATE users SET role = $1 WHERE id = $2 RETURNING *', [role, userId]);
+        return res.rows[0];
+    } finally {
+        client.release();
+    }
+}
+
+export async function getAllGenerations(limit = 100) {
+    const client = await pool.connect();
+    try {
+        const res = await client.query(`
+            SELECT gp.*, u.email 
+            FROM generated_posts gp 
+            JOIN users u ON gp.user_id = u.id 
+            ORDER BY gp.created_at DESC 
+            LIMIT $1
+        `, [limit]);
+        return res.rows;
+    } finally {
+        client.release();
+    }
+}
+
+export async function getGlobalStats() {
+    const client = await pool.connect();
+    try {
+        const usersCount = await client.query('SELECT COUNT(*) FROM users');
+        const generationsCount = await client.query('SELECT COUNT(*) FROM generated_posts');
+        const flaggedCount = await client.query('SELECT COUNT(*) FROM generated_posts WHERE is_flagged = TRUE');
+
+        return {
+            totalUsers: parseInt(usersCount.rows[0].count),
+            totalGenerations: parseInt(generationsCount.rows[0].count),
+            flaggedContent: parseInt(flaggedCount.rows[0].count)
+        };
+    } finally {
+        client.release();
+    }
+}
+
+export async function flagContent(postId: number, reason: string) {
+    const client = await pool.connect();
+    try {
+        await client.query('UPDATE generated_posts SET is_flagged = TRUE, flag_reason = $1 WHERE id = $2', [reason, postId]);
+    } finally {
+        client.release();
+    }
+}
