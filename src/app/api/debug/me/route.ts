@@ -9,13 +9,13 @@ export async function GET() {
             return NextResponse.json({ error: 'No session' });
         }
 
-        const dbUser = await getOrCreateUser(session.user.sub, session.user.email);
+        const dbUser = await getOrCreateUser(session.user.sub, session.user.email || '');
         return NextResponse.json({
             auth0_sub: session.user.sub,
             email: session.user.email,
             db_record: dbUser
         });
     } catch (error) {
-        return NextResponse.json({ error: error.message });
+        return NextResponse.json({ error: (error as Error).message });
     }
 }
