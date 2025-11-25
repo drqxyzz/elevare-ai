@@ -23,7 +23,7 @@ interface GeneratedResult {
 }
 
 export default function Dashboard() {
-    const { user, isLoading } = useUser();
+    const { user, isLoading, error } = useUser();
     const [loading, setLoading] = useState(false);
     const [usage, setUsage] = useState<{ usage: number; limit: number; role: string } | null>(null);
     const [result, setResult] = useState<GeneratedResult | null>(null);
@@ -138,6 +138,20 @@ export default function Dashboard() {
         return (
             <div className="min-h-screen flex items-center justify-center">
                 <Loader2 className="w-8 h-8 animate-spin text-primary" />
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <div className="text-center">
+                    <h2 className="text-xl font-bold text-destructive">Authentication Error</h2>
+                    <p className="text-muted-foreground">{error.message}</p>
+                    <Button variant="outline" className="mt-4" onClick={() => window.location.reload()}>
+                        Retry
+                    </Button>
+                </div>
             </div>
         );
     }
