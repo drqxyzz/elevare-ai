@@ -10,6 +10,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -243,7 +244,7 @@ export default function Dashboard() {
                                         </TabsContent>
                                     </Tabs>
 
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <div className="space-y-2">
                                             <Label htmlFor="purpose">Goal / Purpose</Label>
                                             <Input
@@ -256,25 +257,24 @@ export default function Dashboard() {
                                         </div>
                                         <div className="space-y-2">
                                             <Label>Tone / Vibe 🎭</Label>
-                                            <div className="flex flex-wrap gap-2">
-                                                {['Professional', 'Casual', 'Funny', 'Educational', 'Inspirational', 'Controversial'].map((t) => (
-                                                    <Button
-                                                        key={t}
-                                                        variant={tone === t ? "default" : "outline"}
-                                                        size="sm"
-                                                        onClick={() => setTone(t)}
-                                                        className="text-xs flex-grow"
-                                                    >
-                                                        {t}
-                                                    </Button>
-                                                ))}
-                                            </div>
+                                            <Select value={tone} onValueChange={setTone}>
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder="Select a tone" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    {['Professional', 'Casual', 'Funny', 'Educational', 'Inspirational', 'Controversial'].map((t) => (
+                                                        <SelectItem key={t} value={t}>
+                                                            {t}
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
                                         </div>
                                     </div>
 
                                     <div className="space-y-3">
                                         <Label>Target Platforms</Label>
-                                        <div className="flex flex-wrap gap-2 justify-center p-4 bg-muted/20 rounded-lg border border-dashed">
+                                        <div className="flex flex-wrap gap-3 justify-center p-4 bg-muted/20 rounded-lg border border-dashed">
                                             {[
                                                 { id: 'twitter', label: 'Twitter', icon: Twitter },
                                                 { id: 'linkedin', label: 'LinkedIn', icon: Linkedin },
