@@ -40,7 +40,7 @@ export default function Dashboard() {
     const [url, setUrl] = useState('');
     const [text, setText] = useState('');
     const [purpose, setPurpose] = useState('');
-    const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>(['linkedin']);
+    const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>(['twitter']);
     const [showMonetization, setShowMonetization] = useState(false);
 
     const togglePlatform = (id: string) => {
@@ -242,10 +242,10 @@ export default function Dashboard() {
                                         <Label>Target Platforms</Label>
                                         <div className="flex flex-wrap gap-2">
                                             {[
-                                                { id: 'linkedin', label: 'LinkedIn', icon: '💼' },
-                                                { id: 'twitter', label: 'Twitter / X', icon: '🐦' },
-                                                { id: 'youtube', label: 'YouTube', icon: '▶️' },
-                                                { id: 'instagram', label: 'Instagram', icon: '📸' }
+                                                { id: 'twitter', label: 'Twitter / X' },
+                                                { id: 'youtube', label: 'YouTube' },
+                                                { id: 'instagram', label: 'Instagram' },
+                                                { id: 'tiktok', label: 'TikTok' }
                                             ].map(platform => (
                                                 <Button
                                                     key={platform.id}
@@ -254,7 +254,6 @@ export default function Dashboard() {
                                                     onClick={() => togglePlatform(platform.id)}
                                                     className="gap-2"
                                                 >
-                                                    <span>{platform.icon}</span>
                                                     {platform.label}
                                                 </Button>
                                             ))}
@@ -338,11 +337,6 @@ export default function Dashboard() {
                                                 <CardHeader className="bg-muted/30 pb-3">
                                                     <div className="flex items-center justify-between">
                                                         <CardTitle className="flex items-center gap-2 capitalize">
-                                                            {/* Simple icon mapping based on platform name */}
-                                                            {output.platform.includes('twitter') && '🐦'}
-                                                            {output.platform.includes('linkedin') && '💼'}
-                                                            {output.platform.includes('youtube') && '▶️'}
-                                                            {output.platform.includes('instagram') && '📸'}
                                                             {output.platform}
                                                         </CardTitle>
                                                         <Button variant="ghost" size="sm" onClick={() => copyToClipboard(output.content || output.description || '')}>

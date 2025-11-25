@@ -74,6 +74,7 @@ export async function POST(req: Request) {
          - **Twitter**: Thread-style or punchy single tweet. Include hashtags.
          - **YouTube**: Title, Description, Tags.
          - **Instagram**: Visual description, Caption, Hashtags.
+         - **TikTok**: Video concept/script, Caption, Hashtags.
       4. **Monetization** (If YES): Provide specific upsell/downsell ideas or CTA strategies.
 
       Output MUST be valid JSON with this structure:
@@ -89,6 +90,13 @@ export async function POST(req: Request) {
             "platform": "twitter",
             "content": "Tweet content...",
             "hashtags": ["#tag1", "#tag2"],
+            "monetization": "..."
+          },
+          {
+            "platform": "tiktok",
+            "title": "Video Hook",
+            "content": "Script/Concept...",
+            "hashtags": ["#tag1"],
             "monetization": "..."
           }
           ... (one per selected platform)
@@ -116,7 +124,7 @@ export async function POST(req: Request) {
 
         // Extract arrays for DB (backward compatibility - use first output)
         const titles = data.outputs.map((o: any) => o.title || o.platform).filter(Boolean);
-        const headlines = data.outputs.map((o: any) => o.content.substring(0, 50) + '...').filter(Boolean);
+        const headlines = data.outputs.map((o: any) => (o.content || o.description || '').substring(0, 50) + '...').filter(Boolean);
         const suggestions = data.outputs.map((o: any) => o.monetization).filter(Boolean).join('\n');
 
         // Save to DB
