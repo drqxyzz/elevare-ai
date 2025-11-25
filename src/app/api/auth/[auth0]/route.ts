@@ -12,9 +12,12 @@ export const GET = async (
         console.log(`Requested route: ${route}`);
 
         // Check Env Vars
-        if (!process.env.AUTH0_SECRET || !process.env.AUTH0_ISSUER_BASE_URL || !process.env.AUTH0_CLIENT_ID) {
-            console.error("Missing Auth0 Environment Variables");
-            return NextResponse.json({ error: "Missing Environment Variables" }, { status: 500 });
+        const requiredVars = ['AUTH0_SECRET', 'AUTH0_ISSUER_BASE_URL', 'AUTH0_CLIENT_ID', 'APP_BASE_URL'];
+        const missingVars = requiredVars.filter(key => !process.env[key]);
+
+        if (missingVars.length > 0) {
+            console.error("Missing Auth0 Environment Variables:", missingVars);
+            return NextResponse.json({ error: "Missing Environment Variables", missing: missingVars }, { status: 500 });
         }
 
         if (route === 'login') {
