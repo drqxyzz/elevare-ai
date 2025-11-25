@@ -50,14 +50,22 @@ export default function AdminDashboard() {
                 fetch('/api/admin/generations')
             ]);
 
-            const statsData = await statsRes.json();
-            const usersData = await usersRes.json();
-            const genData = await genRes.json();
+            const handleResponse = async (res: Response, name: string) => {
+                const contentType = res.headers.get('content-type');
+                if (contentType && contentType.includes('application/json')) {
+                    return res.json();
+                } else {
+                    const text = await res.text();
+                    console.error(`Expected JSON from ${name} but got:`, text.substring(0, 200)); // Log first 200 chars
+                    throw new Error(`Invalid response from ${name}`);
+                }
+            };
 
-            if (statsRes.status === 401 || usersRes.status === 401 || genRes.status === 401) {
-                toast.error('Unauthorized: You do not have developer access.');
-                return;
-            }
+            const [statsData, usersData, genData] = await Promise.all([
+                handleResponse(statsRes, 'stats'),
+                handleResponse(usersRes, 'users'),
+                handleResponse(genRes, 'generations')
+            ]);
 
             if (!statsData.error) setStats(statsData);
             if (!usersData.error) setUsers(usersData);
