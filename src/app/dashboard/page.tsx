@@ -182,17 +182,7 @@ export default function Dashboard() {
             <Navbar />
 
             <main className="flex-1 container mx-auto px-4 py-8">
-                <div className="max-w-5xl mx-auto space-y-8">
-
-                    {/* Header & Usage */}
-                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                        <div>
-                            <h1 className="text-3xl font-bold">Dashboard</h1>
-                            <p className="text-muted-foreground">Create your next viral post.</p>
-                        </div>
-
-
-                    </div>
+                <div className="max-w-5xl mx-auto space-y-10">
 
                     {/* Limit Alert */}
                     {isLimitReached && (
@@ -200,16 +190,17 @@ export default function Dashboard() {
                             <AlertCircle className="h-4 w-4" />
                             <AlertTitle>Limit Reached</AlertTitle>
                             <AlertDescription>
-                                You have used all your free generations. Please upgrade to the Pro plan to continue.
+                                You have reached your free tier limit of {usage?.limit} generations.
+                                Please upgrade to continue creating content.
                             </AlertDescription>
                         </Alert>
                     )}
 
                     {/* Main Content Area - Centered Single Column */}
-                    <div className="max-w-2xl mx-auto space-y-10">
+                    <div className="max-w-5xl mx-auto space-y-10">
 
                         {/* Input Section */}
-                        <div className="space-y-6">
+                        <div className="max-w-3xl mx-auto w-full space-y-6">
                             <Card className="border-muted/60 shadow-sm">
                                 <CardHeader>
                                     <CardTitle className="text-center">What are we creating today?</CardTitle>
@@ -258,7 +249,7 @@ export default function Dashboard() {
                                         <div className="space-y-2">
                                             <Label>Tone / Vibe 🎭</Label>
                                             <Select value={tone} onValueChange={setTone}>
-                                                <SelectTrigger>
+                                                <SelectTrigger className="w-full">
                                                     <SelectValue placeholder="Select a tone" />
                                                 </SelectTrigger>
                                                 <SelectContent>
@@ -351,7 +342,7 @@ export default function Dashboard() {
                             )}
 
                             {loading && (
-                                <div className="space-y-8">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div className="space-y-2">
                                         <Skeleton className="h-8 w-1/3 mx-auto" />
                                         <Skeleton className="h-64 w-full rounded-xl" />
@@ -364,7 +355,7 @@ export default function Dashboard() {
                             )}
 
                             {result && (
-                                <div className="space-y-12 animate-in fade-in slide-in-from-bottom-8 duration-700">
+                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 animate-in fade-in slide-in-from-bottom-8 duration-700">
                                     {result.outputs.map((output, i) => (
                                         <div key={i} className="space-y-4">
                                             <div className="flex items-center justify-between px-4">

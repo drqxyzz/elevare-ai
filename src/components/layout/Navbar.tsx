@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { useUser } from '@auth0/nextjs-auth0/client';
 import { Button } from '@/components/ui/button';
 import { Sparkles, Menu, X } from 'lucide-react';
@@ -10,6 +11,7 @@ import { ModeToggle } from '@/components/mode-toggle';
 import { UserMenu } from '@/components/layout/UserMenu';
 
 export function Navbar() {
+    const pathname = usePathname();
     const { user, isLoading } = useUser();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -22,6 +24,13 @@ export function Navbar() {
                     </div>
                     Elevare AI
                 </Link>
+
+                {/* Centered Dashboard Title */}
+                {pathname === '/dashboard' && (
+                    <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 font-bold text-lg hidden md:block">
+                        Dashboard
+                    </div>
+                )}
 
                 {/* Desktop Nav */}
                 <div className="hidden md:flex items-center gap-6">
