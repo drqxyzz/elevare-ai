@@ -2,47 +2,120 @@
 
 import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Users, Zap, AlertTriangle } from 'lucide-react';
+import { Users, Zap, AlertTriangle, ShieldAlert, History } from 'lucide-react';
 import { Navbar } from '@/components/layout/Navbar';
-import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
+import { Badge } from '@/components/ui/badge';
+import { toast } from 'sonner';
+
+interface User {
+    id: number;
+    email: string;
+    role: string;
+    usage_count: number;
+    is_suspended: boolean;
+    created_at: string;
+}
+
+interface Generation {
+    id: number;
+    email: string;
+    input_text: string;
+    input_url: string;
+    purpose: string;
+    suggestions: string;
+    is_flagged: boolean;
+    created_at: string;
+}
 
 export default function AdminDashboard() {
     const [stats, setStats] = useState({ totalUsers: 0, totalGenerations: 0, flaggedContent: 0 });
+    const [users, setUsers] = useState<User[]>([]);
+    const [generations, setGenerations] = useState<Generation[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetch('/api/admin/stats')
-            .then(res => res.json())
-            .then(data => {
-                if (!data.error) setStats(data);
-                setLoading(false);
-            })
-            .catch(err => {
-                console.error(err);
-                setLoading(false);
-            });
+        fetchData();
     }, []);
+
+    const fetchData = async () => {
+        try {
+            const [statsRes, usersRes, genRes] = await Promise.all([
+                fetch('/api/admin/stats'),
+                fetch('/api/admin/users'),
+                fetch('/api/admin/generations')
+            ]);
+
+            const statsData = await statsRes.json();
+            const usersData = await usersRes.json();
+            const genData = await genRes.json();
+
+            if (!statsData.error) setStats(statsData);
+            if (!usersData.error) setUsers(usersData);
+            if (!genData.error) setGenerations(genData);
+        } catch (error) {
+            console.error('Failed to fetch admin data', error);
+            toast.error('Failed to load dashboard data');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleRoleChange = async (userId: number, newRole: string) => {
+        try {
+            const res = await fetch('/api/admin/users', {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId, role: newRole }),
+            });
+
+            if (res.ok) {
+                toast.success('User role updated');
+                fetchData(); // Refresh data
+            } else {
+                toast.error('Failed to update role');
+            }
+        } catch (error) {
+            toast.error('Something went wrong');
+        }
+    };
+
+    const handleSuspensionToggle = async (userId: number, currentStatus: boolean) => {
+        try {
+            const res = await fetch('/api/admin/users', {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId, isSuspended: !currentStatus }),
+            });
+
+            if (res.ok) {
+                toast.success(currentStatus ? 'User restored' : 'User suspended');
+                fetchData(); // Refresh data
+            } else {
+                toast.error('Failed to update suspension status');
+            }
+        } catch (error) {
+            toast.error('Something went wrong');
+        }
+    };
 
     if (loading) return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
 
     return (
         <div className="min-h-screen bg-muted/10">
             <Navbar />
-            <main className="container mx-auto px-4 py-8">
-                <div className="flex justify-between items-center mb-8">
-                    <h1 className="text-3xl font-bold">Admin Dashboard</h1>
-                    <div className="flex gap-4">
-                        <Link href="/admin/users">
-                            <Button variant="outline">Manage Users</Button>
-                        </Link>
-                        <Link href="/admin/generations">
-                            <Button variant="outline">Monitor Content</Button>
-                        </Link>
-                    </div>
+            <main className="container mx-auto px-4 py-8 max-w-7xl">
+                <div className="flex items-center gap-3 mb-8">
+                    <ShieldAlert className="w-8 h-8 text-primary" />
+                    <h1 className="text-3xl font-bold">Developer Console</h1>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {/* Stats Overview */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                     <Card>
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                             <CardTitle className="text-sm font-medium">Total Users</CardTitle>
@@ -71,6 +144,98 @@ export default function AdminDashboard() {
                         </CardContent>
                     </Card>
                 </div>
+
+                {/* Main Content Tabs */}
+                <Tabs defaultValue="users" className="space-y-6">
+                    <TabsList className="grid w-full grid-cols-2 max-w-[400px]">
+                        <TabsTrigger value="users">User Management</TabsTrigger>
+                        <TabsTrigger value="generations">Content Log</TabsTrigger>
+                    </TabsList>
+
+                    <TabsContent value="users">
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Registered Users</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <Table>
+                                    <TableHeader>
+                                        <TableRow>
+                                            <TableHead>ID</TableHead>
+                                            <TableHead>Email</TableHead>
+                                            <TableHead>Usage</TableHead>
+                                            <TableHead>Role</TableHead>
+                                            <TableHead>Suspended</TableHead>
+                                            <TableHead>Joined</TableHead>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {users.map((user) => (
+                                            <TableRow key={user.id} className={user.is_suspended ? 'bg-red-50/50 dark:bg-red-900/10' : ''}>
+                                                <TableCell className="font-mono text-xs">{user.id}</TableCell>
+                                                <TableCell>{user.email}</TableCell>
+                                                <TableCell>{user.usage_count}</TableCell>
+                                                <TableCell>
+                                                    <Select defaultValue={user.role} onValueChange={(val) => handleRoleChange(user.id, val)}>
+                                                        <SelectTrigger className="w-[130px] h-8">
+                                                            <SelectValue />
+                                                        </SelectTrigger>
+                                                        <SelectContent>
+                                                            <SelectItem value="free">Free</SelectItem>
+                                                            <SelectItem value="premium">Premium</SelectItem>
+                                                            <SelectItem value="vip">VIP</SelectItem>
+                                                            <SelectItem value="developer">Developer</SelectItem>
+                                                        </SelectContent>
+                                                    </Select>
+                                                </TableCell>
+                                                <TableCell>
+                                                    <Switch
+                                                        checked={user.is_suspended}
+                                                        onCheckedChange={() => handleSuspensionToggle(user.id, user.is_suspended)}
+                                                    />
+                                                </TableCell>
+                                                <TableCell className="text-muted-foreground text-xs">
+                                                    {new Date(user.created_at).toLocaleDateString()}
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </CardContent>
+                        </Card>
+                    </TabsContent>
+
+                    <TabsContent value="generations">
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Recent Generations</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="space-y-4">
+                                    {generations.map((gen) => (
+                                        <div key={gen.id} className={`p-4 rounded-lg border ${gen.is_flagged ? 'border-red-200 bg-red-50 dark:bg-red-900/10 dark:border-red-900/30' : 'bg-muted/20'}`}>
+                                            <div className="flex justify-between items-start mb-2">
+                                                <div className="space-y-1">
+                                                    <div className="flex items-center gap-2">
+                                                        <span className="text-sm font-semibold">{gen.email}</span>
+                                                        <span className="text-xs text-muted-foreground">{new Date(gen.created_at).toLocaleString()}</span>
+                                                    </div>
+                                                    <Badge variant="outline" className="text-xs font-normal">
+                                                        {gen.purpose}
+                                                    </Badge>
+                                                </div>
+                                                {gen.is_flagged && <Badge variant="destructive">Flagged</Badge>}
+                                            </div>
+                                            <div className="text-sm text-muted-foreground line-clamp-2 font-mono bg-background/50 p-2 rounded">
+                                                {gen.input_text || gen.input_url || 'No input'}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </TabsContent>
+                </Tabs>
             </main>
         </div>
     );

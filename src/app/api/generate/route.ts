@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { model } from '@/lib/ai/gemini';
 import { scrapeUrl } from '@/lib/scraper';
-import { getOrCreateUser, incrementUsage, saveGeneratedPost } from '@/lib/db/actions';
+import { getOrCreateUser, incrementUsage, saveGeneratedPost, getUserUsage } from '@/lib/db/actions';
 import { auth0 } from '@/lib/auth0';
 
 export async function POST(req: Request) {
@@ -29,12 +29,15 @@ export async function POST(req: Request) {
         const dbUser = await getOrCreateUser(user.sub as string, user.email as string);
         console.log(`DB User retrieved: ${dbUser.id}, Role: ${dbUser.role}, Usage: ${dbUser.usage_count}`);
 
-        // Check Limits
-        let limit = 3;
-        if (dbUser.role === 'premium') limit = 60;
-        if (dbUser.role === 'developer' || dbUser.role === 'vip') limit = 999999;
+        // Check usage limit and suspension
+        const userUsage = await getUserUsage(session.user.sub);
 
-        if (dbUser.usage_count >= limit) {
+        if (userUsage?.is_suspended) {
+            return NextResponse.json({ error: 'Your account has been suspended.' }, { status: 403 });
+        }
+
+        const limit = userUsage?.role === 'premium' || userUsage?.role === 'vip' || userUsage?.role === 'developer' ? 1000 : 5; // Free limit
+        if (userUsage && userUsage.usage_count >= limit) {
             console.warn(`Limit reached for role ${dbUser.role}`);
             return NextResponse.json({ error: 'Limit reached', limitReached: true }, { status: 403 });
         }

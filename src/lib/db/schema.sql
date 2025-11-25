@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS users (
   email VARCHAR(255) NOT NULL,
   role VARCHAR(50) DEFAULT 'free', -- 'free', 'premium', 'vip', 'developer'
   usage_count INTEGER DEFAULT 0,
+  is_suspended BOOLEAN DEFAULT FALSE,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 

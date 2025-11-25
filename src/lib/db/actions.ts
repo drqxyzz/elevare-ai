@@ -16,7 +16,7 @@ export async function getOrCreateUser(auth0Id: string, email: string) {
 export async function getUserUsage(auth0Id: string) {
     const client = await pool.connect();
     try {
-        const res = await client.query('SELECT usage_count, role FROM users WHERE auth0_id = $1', [auth0Id]);
+        const res = await client.query('SELECT usage_count, role, is_suspended FROM users WHERE auth0_id = $1', [auth0Id]);
         return res.rows[0];
     } finally {
         client.release();
@@ -100,10 +100,19 @@ export async function getGlobalStats() {
         const flaggedCount = await client.query('SELECT COUNT(*) FROM generated_posts WHERE is_flagged = TRUE');
 
         return {
-            totalUsers: parseInt(usersCount.rows[0].count),
-            totalGenerations: parseInt(generationsCount.rows[0].count),
-            flaggedContent: parseInt(flaggedCount.rows[0].count)
+            totalUsers: parseInt(usersCount.rows[0].count, 10),
+            totalGenerations: parseInt(generationsCount.rows[0].count, 10),
+            flaggedContent: parseInt(flaggedCount.rows[0].count, 10)
         };
+    } finally {
+        client.release();
+    }
+}
+
+export async function toggleUserSuspension(userId: number, isSuspended: boolean) {
+    const client = await pool.connect();
+    try {
+        await client.query('UPDATE users SET is_suspended = $1 WHERE id = $2', [isSuspended, userId]);
     } finally {
         client.release();
     }

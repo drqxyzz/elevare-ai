@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { auth0 } from '@/lib/auth0';
-import { getAllUsers, updateUserRole, getUserUsage } from '@/lib/db/actions';
+import { getAllUsers, updateUserRole, getUserUsage, toggleUserSuspension } from '@/lib/db/actions';
 
 async function isAdmin() {
     const session = await auth0.getSession();
@@ -31,13 +31,19 @@ export async function PATCH(req: Request) {
     }
 
     try {
-        const { userId, role } = await req.json();
-        if (!userId || !role) {
-            return NextResponse.json({ error: 'Missing userId or role' }, { status: 400 });
+        const { userId, role, isSuspended } = await req.json();
+
+        if (userId && role) {
+            const updatedUser = await updateUserRole(userId, role);
+            return NextResponse.json(updatedUser);
         }
 
-        const updatedUser = await updateUserRole(userId, role);
-        return NextResponse.json(updatedUser);
+        if (userId && isSuspended !== undefined) {
+            await toggleUserSuspension(userId, isSuspended);
+            return NextResponse.json({ success: true });
+        }
+
+        return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
     } catch (error) {
         console.error('Failed to update user role:', error);
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
