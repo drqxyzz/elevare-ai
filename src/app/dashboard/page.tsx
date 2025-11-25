@@ -336,14 +336,14 @@ export default function Dashboard() {
                                         <h2 className="text-xl font-semibold">Generated Content</h2>
                                         {result.outputs.map((output, i) => (
                                             <Card key={i} className="overflow-hidden">
-                                                <CardHeader className="bg-muted/30 pb-3">
+                                                <CardHeader className="bg-muted/30 py-2 px-4">
                                                     <div className="flex items-center justify-center relative">
-                                                        <CardTitle className="flex items-center gap-2 capitalize text-center">
+                                                        <CardTitle className="text-center capitalize text-sm font-bold">
                                                             {output.platform}
                                                         </CardTitle>
                                                     </div>
                                                 </CardHeader>
-                                                <CardContent className="p-4 space-y-4">
+                                                <CardContent className="p-3 space-y-3">
                                                     {/* Title / Hook (if present) */}
                                                     {output.title && (
                                                         <div className="space-y-1">
