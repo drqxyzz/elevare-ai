@@ -12,10 +12,14 @@ export async function GET() {
         const { user } = session;
         const dbUser = await getOrCreateUser(user.sub as string, user.email as string);
 
+        let limit = 3; // Default Free
+        if (dbUser.role === 'premium') limit = 60;
+        if (dbUser.role === 'developer' || dbUser.role === 'vip') limit = 999999; // Unlimited
+
         return NextResponse.json({
             usage: dbUser.usage_count,
             role: dbUser.role,
-            limit: 3
+            limit: limit
         });
 
     } catch (error) {

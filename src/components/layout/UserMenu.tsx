@@ -14,10 +14,32 @@ import { Button } from "@/components/ui/button";
 import { LogOut, Settings, History, User } from 'lucide-react';
 import Link from 'next/link';
 
+import { useEffect, useState } from 'react';
+import { Badge } from '@/components/ui/badge';
+
 export function UserMenu() {
     const { user } = useUser();
+    const [role, setRole] = useState<string>('free');
+
+    useEffect(() => {
+        if (user) {
+            fetch('/api/user/usage')
+                .then(res => res.json())
+                .then(data => setRole(data.role || 'free'))
+                .catch(console.error);
+        }
+    }, [user]);
 
     if (!user) return null;
+
+    const getBadgeColor = (r: string) => {
+        switch (r) {
+            case 'premium': return 'bg-purple-500 hover:bg-purple-600';
+            case 'developer': return 'bg-green-500 hover:bg-green-600';
+            case 'vip': return 'bg-yellow-500 hover:bg-yellow-600';
+            default: return 'bg-gray-500 hover:bg-gray-600';
+        }
+    };
 
     return (
         <DropdownMenu>
@@ -32,7 +54,12 @@ export function UserMenu() {
             <DropdownMenuContent className="w-56" align="end" forceMount>
                 <DropdownMenuLabel className="font-normal">
                     <div className="flex flex-col space-y-1">
-                        <p className="text-sm font-medium leading-none">{user.name}</p>
+                        <div className="flex items-center justify-between">
+                            <p className="text-sm font-medium leading-none">{user.name}</p>
+                            <Badge className={`text-[10px] h-5 px-1.5 ${getBadgeColor(role)}`}>
+                                {role.toUpperCase()}
+                            </Badge>
+                        </div>
                         <p className="text-xs leading-none text-muted-foreground">
                             {user.email}
                         </p>

@@ -28,9 +28,14 @@ export async function POST(req: Request) {
         const dbUser = await getOrCreateUser(user.sub as string, user.email as string);
         console.log(`DB User retrieved: ${dbUser.id}, Role: ${dbUser.role}, Usage: ${dbUser.usage_count}`);
 
-        if (dbUser.role === 'free' && dbUser.usage_count >= 3) {
-            console.warn("Free limit reached");
-            return NextResponse.json({ error: 'Free limit reached', limitReached: true }, { status: 403 });
+        // Check Limits
+        let limit = 3;
+        if (dbUser.role === 'premium') limit = 60;
+        if (dbUser.role === 'developer' || dbUser.role === 'vip') limit = 999999;
+
+        if (dbUser.usage_count >= limit) {
+            console.warn(`Limit reached for role ${dbUser.role}`);
+            return NextResponse.json({ error: 'Limit reached', limitReached: true }, { status: 403 });
         }
 
         // Scrape URL if provided

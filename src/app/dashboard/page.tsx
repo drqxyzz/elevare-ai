@@ -166,7 +166,7 @@ export default function Dashboard() {
                                     </div>
                                     <div className="h-4 w-px bg-border" />
                                     <div className="text-sm">
-                                        <span className="font-medium">Usage:</span> {usage.usage} / {usage.role === 'free' ? usage.limit : '∞'}
+                                        <span className="font-medium">Usage:</span> {usage.limit > 1000 ? 'Unlimited' : `${usage.usage} / ${usage.limit}`}
                                     </div>
                                     {usage.role === 'free' && (
                                         <Button size="sm" variant="outline" className="ml-2 h-7 text-xs">
@@ -251,7 +251,7 @@ export default function Dashboard() {
                                             ) : (
                                                 <>
                                                     <Sparkles className="mr-2 h-4 w-4" />
-                                                    Generate Content
+                                                    {usage?.role === 'free' ? `Generate (${usage.usage}/${usage.limit})` : 'Generate Content'}
                                                 </>
                                             )}
                                         </Button>
