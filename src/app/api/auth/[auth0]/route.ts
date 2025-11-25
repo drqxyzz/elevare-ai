@@ -69,7 +69,8 @@ export const GET = async (
                 return NextResponse.json(session.user);
             } catch (profileError: any) {
                 console.error("Profile Error:", profileError);
-                return NextResponse.json({ error: "Profile Failed", details: profileError.message }, { status: 500 });
+                // If session is invalid/expired, treat as logged out (204) instead of error (500)
+                return NextResponse.json({}, { status: 204 });
             }
         }
 
