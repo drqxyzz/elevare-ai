@@ -280,21 +280,26 @@ export default function Dashboard() {
                                         <h2 className="text-xl font-semibold">Generated Options</h2>
                                         {result.posts.map((post, i) => (
                                             <Card key={i}>
-                                                <CardContent className="p-4 space-y-3">
+                                                <CardContent className="p-3 space-y-2">
                                                     <div className="space-y-1">
                                                         <div className="flex items-center justify-between">
                                                             <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Option {i + 1}</span>
-                                                            <div className="flex gap-2">
-                                                                <Button variant="ghost" size="icon" onClick={() => copyToClipboard(post.title)} title="Copy Title">
-                                                                    <Copy className="w-4 h-4" />
+                                                            <div className="flex gap-1">
+                                                                <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => copyToClipboard(post.title)} title="Copy Title">
+                                                                    <Copy className="w-3 h-3" />
                                                                 </Button>
                                                             </div>
                                                         </div>
-                                                        <h3 className="font-bold text-lg">{post.title}</h3>
+                                                        <h3 className="font-bold text-base leading-tight">{post.title}</h3>
                                                     </div>
-                                                    <div className="p-3 bg-muted/50 rounded-lg">
-                                                        <p className="text-sm text-muted-foreground mb-1">Headline / Hook:</p>
-                                                        <p className="font-medium">{post.headline}</p>
+                                                    <div className="p-2 bg-muted/50 rounded-md flex items-start justify-between gap-2">
+                                                        <div>
+                                                            <p className="text-xs text-muted-foreground mb-0.5">Headline / Hook:</p>
+                                                            <p className="font-medium text-sm leading-snug">{post.headline}</p>
+                                                        </div>
+                                                        <Button variant="ghost" size="icon" className="h-6 w-6 shrink-0" onClick={() => copyToClipboard(post.headline)} title="Copy Headline">
+                                                            <Copy className="w-3 h-3" />
+                                                        </Button>
                                                     </div>
                                                 </CardContent>
                                             </Card>
