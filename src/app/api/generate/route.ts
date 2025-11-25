@@ -17,8 +17,8 @@ export async function POST(req: Request) {
         console.log(`User authenticated: ${user.sub}`);
 
 
-        const { url, text, purpose, platforms = ['linkedin'], monetization = false } = await req.json();
-        console.log(`Input received - URL: ${!!url}, Text: ${!!text}, Purpose: ${!!purpose}, Platforms: ${platforms}, Monetization: ${monetization}`);
+        const { url, text, purpose, tone = 'Professional', platforms = ['linkedin'], monetization = false } = await req.json();
+        console.log(`Input received - URL: ${!!url}, Text: ${!!text}, Purpose: ${!!purpose}, Tone: ${tone}, Platforms: ${platforms}, Monetization: ${monetization}`);
 
         if (!url && !text) {
             return NextResponse.json({ error: 'URL or text is required' }, { status: 400 });
@@ -59,20 +59,29 @@ export async function POST(req: Request) {
         // AI Generation
         console.log("Preparing AI prompt...");
         const prompt = `
-      You are an expert social media strategist with a modern, 2025 creator vibe.
+      You are an expert social media strategist.
       Target Platforms: ${platforms.join(', ')}
       Topic: ${text}
       URL Context: ${scrapedContent ? `Content from URL: ${scrapedContent.substring(0, 5000)}` : 'No URL provided'}
       Purpose/Goal: ${purpose}
+      Tone/Vibe: ${tone}
       Include Monetization Suggestions: ${monetization ? 'YES' : 'NO'}
       
       STRICT OUTPUT RULES:
-      1. **Tone**: Modern, human, authentic, smart. NOT corporate, robotic, or academic.
+      1. **Tone**: You MUST adopt the "${tone}" persona.
+         - If "Funny": Use humor, wit, maybe sarcasm.
+         - If "Professional": Clean, authoritative, corporate-friendly.
+         - If "Controversial": Bold, polarizing, opinionated.
+         - If "Educational": Informative, teacher-like.
       2. **Structure**: Generate ONE high-quality post option for EACH selected platform.
       3. **Universal Requirements (ALL PLATFORMS MUST HAVE THESE)**:
          - **\`title\`**: The HOOK or Headline. (Even for Twitter/Instagram).
          - **\`media_suggestion\`**: Visual idea, Thumbnail concept, or Video style.
          - **\`hashtags\`**: Relevant tags (called \`tags\` for YouTube).
+         - **\`cta_variations\`**: Array of 3 distinct Call-To-Actions (Low, Mid, High friction).
+         - **\`trend_matching\`**: Suggest a trending audio, meme format, or visual style that fits.
+         - **\`engagement_prediction\`**: Object with \`score\` (1-10) and \`reason\` (Why it will go viral).
+         - **\`best_posting_time\`**: Suggest the optimal day/time to post this specific content.
       4. **Platform Specifics**:
          - **Twitter**: \`content\` (Tweet/Thread).
          - **YouTube**: \`description\` (Detailed, SEO).
@@ -93,25 +102,12 @@ export async function POST(req: Request) {
             "content": "Tweet content...",
             "media_suggestion": "Image/GIF idea...",
             "hashtags": ["#tag1"],
+            "cta_variations": ["Share if...", "Reply with...", "Click link..."],
+            "trend_matching": "Use the 'X' meme format...",
+            "engagement_prediction": { "score": 8, "reason": "High controversy potential..." },
+            "best_posting_time": "Tuesday at 10:00 AM EST",
             "monetization": "..."
           },
-          {
-            "platform": "youtube",
-            "title": "Video Title",
-            "description": "Full video description...",
-            "media_suggestion": "Thumbnail design concept...",
-            "tags": ["tag1"],
-            "monetization": "..."
-          },
-          {
-            "platform": "tiktok",
-            "title": "Video Hook (Text on Screen)",
-            "content": "Script/Concept...",
-            "caption": "Post caption...",
-            "media_suggestion": "Visual style/Camera angle...",
-            "hashtags": ["#tag1"],
-            "monetization": "..."
-          }
           ... (one per selected platform)
         ]
       }

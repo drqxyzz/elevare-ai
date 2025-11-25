@@ -13,7 +13,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from 'sonner';
-import { Loader2, Copy, AlertCircle, Sparkles } from 'lucide-react';
+import {
+    Loader2, Sparkles, Copy, AlertCircle, Check,
+    Twitter, Linkedin, Youtube, Instagram, Video,
+    Zap, TrendingUp, Clock
+} from 'lucide-react';
 import { LoginModal } from '@/components/auth/LoginModal';
 import ReactMarkdown from 'react-markdown';
 
@@ -27,6 +31,10 @@ interface GeneratedResult {
         media_suggestion?: string;
         hashtags?: string[];
         tags?: string[];
+        cta_variations?: string[];
+        trend_matching?: string;
+        engagement_prediction?: { score: number; reason: string };
+        best_posting_time?: string;
         monetization?: string;
     }[];
 }
@@ -43,6 +51,7 @@ export default function Dashboard() {
     const [url, setUrl] = useState('');
     const [text, setText] = useState('');
     const [purpose, setPurpose] = useState('');
+    const [tone, setTone] = useState('Professional');
     const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>(['twitter']);
     const [showMonetization, setShowMonetization] = useState(false);
 
@@ -122,6 +131,7 @@ export default function Dashboard() {
                     url: inputType === 'url' ? url : undefined,
                     text: inputType === 'text' ? text : undefined,
                     purpose,
+                    tone,
                     platforms: selectedPlatforms,
                     monetization: showMonetization
                 }),
@@ -221,8 +231,8 @@ export default function Dashboard() {
                                             <Label htmlFor="text">Context</Label>
                                             <Textarea
                                                 id="text"
-                                                placeholder="Paste your content or notes here..."
-                                                className="h-32"
+                                                placeholder="Paste your topic, notes, or rough draft here..."
+                                                className="min-h-[100px]"
                                                 value={text}
                                                 onChange={(e) => setText(e.target.value)}
                                                 disabled={loading || !!isLimitReached}
@@ -231,14 +241,31 @@ export default function Dashboard() {
                                     </Tabs>
 
                                     <div className="space-y-2">
-                                        <Label htmlFor="purpose">Purpose / Goal</Label>
-                                        <Textarea
+                                        <Label htmlFor="purpose">Goal / Purpose</Label>
+                                        <Input
                                             id="purpose"
-                                            placeholder="e.g. Announce a new product launch..."
+                                            placeholder="e.g. Drive traffic, Get engagement, Sell product..."
                                             value={purpose}
                                             onChange={(e) => setPurpose(e.target.value)}
                                             disabled={loading || !!isLimitReached}
                                         />
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        <Label>Tone / Vibe 🎭</Label>
+                                        <div className="flex flex-wrap gap-2">
+                                            {['Professional', 'Casual', 'Funny', 'Educational', 'Inspirational', 'Controversial'].map((t) => (
+                                                <Button
+                                                    key={t}
+                                                    variant={tone === t ? "default" : "outline"}
+                                                    size="sm"
+                                                    onClick={() => setTone(t)}
+                                                    className="text-xs"
+                                                >
+                                                    {t}
+                                                </Button>
+                                            ))}
+                                        </div>
                                     </div>
 
                                     <div className="space-y-3">
@@ -336,7 +363,15 @@ export default function Dashboard() {
                                     <div className="grid gap-8">
                                         {result.outputs.map((output, i) => (
                                             <div key={i} className="space-y-2">
-                                                <h3 className="text-lg font-bold capitalize text-center">{output.platform}</h3>
+                                                <div className="flex items-center justify-between px-2">
+                                                    <h3 className="text-lg font-bold capitalize">{output.platform}</h3>
+                                                    {output.best_posting_time && (
+                                                        <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground bg-muted/50 px-2 py-1 rounded-full">
+                                                            <Clock className="w-3 h-3" />
+                                                            <span>Post: {output.best_posting_time}</span>
+                                                        </div>
+                                                    )}
+                                                </div>
                                                 <Card className="overflow-hidden border-muted">
                                                     <CardContent className="p-4 space-y-4">
                                                         {/* Title / Hook (if present) */}
@@ -405,6 +440,60 @@ export default function Dashboard() {
                                                                 <Label className="text-xs text-muted-foreground uppercase">Media Idea 🖼️</Label>
                                                                 <div className="text-sm italic text-muted-foreground bg-blue-50/50 dark:bg-blue-900/10 p-2 rounded-md border border-blue-100 dark:border-blue-900/20">
                                                                     {output.media_suggestion}
+                                                                </div>
+                                                            </div>
+                                                        )}
+
+                                                        {/* Engagement Pack */}
+                                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                                                            {/* Engagement Prediction */}
+                                                            {output.engagement_prediction && (
+                                                                <div className="bg-purple-50 dark:bg-purple-900/10 p-3 rounded-lg border border-purple-100 dark:border-purple-900/20">
+                                                                    <div className="flex items-center gap-2 mb-1">
+                                                                        <Zap className="w-4 h-4 text-purple-600" />
+                                                                        <span className="text-xs font-bold text-purple-700 dark:text-purple-400 uppercase">Virality Score</span>
+                                                                    </div>
+                                                                    <div className="flex items-baseline gap-2">
+                                                                        <span className="text-2xl font-black text-purple-600">{output.engagement_prediction.score}/10</span>
+                                                                    </div>
+                                                                    <p className="text-xs text-muted-foreground mt-1 leading-tight">
+                                                                        {output.engagement_prediction.reason}
+                                                                    </p>
+                                                                </div>
+                                                            )}
+
+                                                            {/* Trend Matching */}
+                                                            {output.trend_matching && (
+                                                                <div className="bg-pink-50 dark:bg-pink-900/10 p-3 rounded-lg border border-pink-100 dark:border-pink-900/20">
+                                                                    <div className="flex items-center gap-2 mb-1">
+                                                                        <TrendingUp className="w-4 h-4 text-pink-600" />
+                                                                        <span className="text-xs font-bold text-pink-700 dark:text-pink-400 uppercase">Trend Match</span>
+                                                                    </div>
+                                                                    <p className="text-xs text-muted-foreground leading-tight">
+                                                                        {output.trend_matching}
+                                                                    </p>
+                                                                </div>
+                                                            )}
+                                                        </div>
+
+                                                        {/* CTA Variations */}
+                                                        {output.cta_variations && output.cta_variations.length > 0 && (
+                                                            <div className="space-y-2 pt-2">
+                                                                <Label className="text-xs text-muted-foreground uppercase">CTA Options (Pick One)</Label>
+                                                                <div className="flex flex-wrap gap-2">
+                                                                    {output.cta_variations.map((cta, idx) => (
+                                                                        <Button
+                                                                            key={idx}
+                                                                            variant="outline"
+                                                                            size="sm"
+                                                                            className="text-xs h-auto py-1 px-2 whitespace-normal text-left justify-start"
+                                                                            onClick={() => copyToClipboard(cta)}
+                                                                            title="Copy CTA"
+                                                                        >
+                                                                            {cta}
+                                                                            <Copy className="w-3 h-3 ml-2 opacity-50" />
+                                                                        </Button>
+                                                                    ))}
                                                                 </div>
                                                             </div>
                                                         )}
