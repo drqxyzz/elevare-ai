@@ -3,16 +3,27 @@ import { auth0 } from '@/lib/auth0';
 import { getAllUsers, updateUserRole, getUserUsage, toggleUserSuspension } from '@/lib/db/actions';
 
 async function isAdmin() {
-    const session = await auth0.getSession();
-    if (!session || !session.user) return false;
+    try {
+        const session = await auth0.getSession();
+        if (!session || !session.user) {
+            console.log('Admin Check: No session found');
+            return false;
+        }
 
-    // Check DB role
-    const dbUser = await getUserUsage(session.user.sub);
-    return dbUser && dbUser.role === 'developer';
+        // Check DB role
+        const dbUser = await getUserUsage(session.user.sub);
+        console.log(`Admin Check: User ${session.user.email} (${session.user.sub}) has role: ${dbUser?.role}`);
+        return dbUser && dbUser.role === 'developer';
+    } catch (e) {
+        console.error('Admin Check Error:', e);
+        return false;
+    }
 }
 
 export async function GET() {
+    console.log('GET /api/admin/users called');
     if (!(await isAdmin())) {
+        console.log('GET /api/admin/users: Unauthorized');
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 

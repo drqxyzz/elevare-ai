@@ -3,15 +3,22 @@ import { auth0 } from '@/lib/auth0';
 import { getAllGenerations, getUserUsage } from '@/lib/db/actions';
 
 async function isAdmin() {
-    const session = await auth0.getSession();
-    if (!session || !session.user) return false;
+    try {
+        const session = await auth0.getSession();
+        if (!session || !session.user) return false;
 
-    const dbUser = await getUserUsage(session.user.sub);
-    return dbUser && dbUser.role === 'developer';
+        const dbUser = await getUserUsage(session.user.sub);
+        return dbUser && dbUser.role === 'developer';
+    } catch (e) {
+        console.error('Admin Check Error:', e);
+        return false;
+    }
 }
 
 export async function GET() {
+    console.log('GET /api/admin/generations called');
     if (!(await isAdmin())) {
+        console.log('GET /api/admin/generations: Unauthorized');
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 

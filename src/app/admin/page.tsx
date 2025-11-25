@@ -54,12 +54,17 @@ export default function AdminDashboard() {
             const usersData = await usersRes.json();
             const genData = await genRes.json();
 
+            if (statsRes.status === 401 || usersRes.status === 401 || genRes.status === 401) {
+                toast.error('Unauthorized: You do not have developer access.');
+                return;
+            }
+
             if (!statsData.error) setStats(statsData);
             if (!usersData.error) setUsers(usersData);
             if (!genData.error) setGenerations(genData);
         } catch (error) {
             console.error('Failed to fetch admin data', error);
-            toast.error('Failed to load dashboard data');
+            toast.error('Failed to load dashboard data. Check console for details.');
         } finally {
             setLoading(false);
         }
