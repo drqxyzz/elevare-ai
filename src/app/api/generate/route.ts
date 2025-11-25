@@ -64,14 +64,16 @@ export async function POST(req: Request) {
       Purpose/Goal: ${purpose}
       
       Please generate:
-      1. 5 Engaging Titles (catchy, professional)
-      2. 5 Headlines per Title (variations) - Wait, actually just 5 Headlines total that are distinct.
+      1. 5 Distinct Post Concepts.
+      2. For each concept, provide a catchy Title and a compelling Headline.
       3. Suggestions for the post body (tone, structure, key points).
       
       Output MUST be valid JSON with this structure:
       {
-        "titles": ["title1", "title2", ...],
-        "headlines": ["headline1", "headline2", ...],
+        "posts": [
+          { "title": "Title 1", "headline": "Headline 1" },
+          { "title": "Title 2", "headline": "Headline 2" }
+        ],
         "suggestions": "markdown string of suggestions"
       }
       Do not include markdown code blocks in the output, just the raw JSON string.
@@ -94,9 +96,13 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: 'AI generation failed' }, { status: 500 });
         }
 
+        // Extract arrays for DB (backward compatibility)
+        const titles = data.posts.map((p: any) => p.title);
+        const headlines = data.posts.map((p: any) => p.headline);
+
         // Save to DB
         console.log("Saving to DB...");
-        await saveGeneratedPost(dbUser.id, url || '', text || '', purpose, data.titles, data.headlines, data.suggestions);
+        await saveGeneratedPost(dbUser.id, url || '', text || '', purpose, titles, headlines, data.suggestions);
         await incrementUsage(dbUser.id);
         console.log("Saved successfully");
 

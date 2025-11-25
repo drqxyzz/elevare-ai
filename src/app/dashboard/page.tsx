@@ -15,10 +15,10 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from 'sonner';
 import { Loader2, Copy, AlertCircle, Sparkles } from 'lucide-react';
 import { LoginModal } from '@/components/auth/LoginModal';
+import ReactMarkdown from 'react-markdown';
 
 interface GeneratedResult {
-    titles: string[];
-    headlines: string[];
+    posts: { title: string; headline: string }[];
     suggestions: string;
 }
 
@@ -284,39 +284,31 @@ export default function Dashboard() {
 
                             {result && (
                                 <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                                    {/* Titles */}
-                                    <Card>
-                                        <CardHeader>
-                                            <CardTitle>Titles</CardTitle>
-                                        </CardHeader>
-                                        <CardContent className="space-y-2">
-                                            {result.titles.map((title, i) => (
-                                                <div key={i} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg group hover:bg-muted transition-colors">
-                                                    <span className="font-medium">{title}</span>
-                                                    <Button variant="ghost" size="icon" onClick={() => copyToClipboard(title)} className="opacity-0 group-hover:opacity-100 transition-opacity">
-                                                        <Copy className="w-4 h-4" />
-                                                    </Button>
-                                                </div>
-                                            ))}
-                                        </CardContent>
-                                    </Card>
-
-                                    {/* Headlines */}
-                                    <Card>
-                                        <CardHeader>
-                                            <CardTitle>Headlines</CardTitle>
-                                        </CardHeader>
-                                        <CardContent className="space-y-2">
-                                            {result.headlines.map((headline, i) => (
-                                                <div key={i} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg group hover:bg-muted transition-colors">
-                                                    <span className="text-sm">{headline}</span>
-                                                    <Button variant="ghost" size="icon" onClick={() => copyToClipboard(headline)} className="opacity-0 group-hover:opacity-100 transition-opacity">
-                                                        <Copy className="w-4 h-4" />
-                                                    </Button>
-                                                </div>
-                                            ))}
-                                        </CardContent>
-                                    </Card>
+                                    {/* Generated Posts */}
+                                    <div className="grid gap-4">
+                                        <h2 className="text-xl font-semibold">Generated Options</h2>
+                                        {result.posts.map((post, i) => (
+                                            <Card key={i}>
+                                                <CardContent className="p-4 space-y-3">
+                                                    <div className="space-y-1">
+                                                        <div className="flex items-center justify-between">
+                                                            <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Option {i + 1}</span>
+                                                            <div className="flex gap-2">
+                                                                <Button variant="ghost" size="icon" onClick={() => copyToClipboard(post.title)} title="Copy Title">
+                                                                    <Copy className="w-4 h-4" />
+                                                                </Button>
+                                                            </div>
+                                                        </div>
+                                                        <h3 className="font-bold text-lg">{post.title}</h3>
+                                                    </div>
+                                                    <div className="p-3 bg-muted/50 rounded-lg">
+                                                        <p className="text-sm text-muted-foreground mb-1">Headline / Hook:</p>
+                                                        <p className="font-medium">{post.headline}</p>
+                                                    </div>
+                                                </CardContent>
+                                            </Card>
+                                        ))}
+                                    </div>
 
                                     {/* Suggestions */}
                                     <Card>
@@ -324,8 +316,8 @@ export default function Dashboard() {
                                             <CardTitle>AI Suggestions</CardTitle>
                                         </CardHeader>
                                         <CardContent>
-                                            <div className="prose prose-sm dark:prose-invert max-w-none whitespace-pre-wrap">
-                                                {result.suggestions}
+                                            <div className="prose prose-sm dark:prose-invert max-w-none">
+                                                <ReactMarkdown>{result.suggestions}</ReactMarkdown>
                                             </div>
                                             <Button variant="outline" className="mt-4" onClick={() => copyToClipboard(result.suggestions)}>
                                                 <Copy className="mr-2 w-4 h-4" /> Copy Suggestions
