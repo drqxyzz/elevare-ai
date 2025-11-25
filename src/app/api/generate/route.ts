@@ -118,17 +118,23 @@ export async function POST(req: Request) {
         const result = await model.generateContent(prompt);
         const response = await result.response;
         const textOutput = response.text();
-        console.log("Gemini response received");
+        console.log("Gemini response received. Raw length:", textOutput.length);
+        console.log("Raw Output Preview:", textOutput.substring(0, 200) + "...");
 
-        // Clean up markdown code blocks if present
-        const cleanJson = textOutput.replace(/```json/g, '').replace(/```/g, '').trim();
+        // Clean up markdown code blocks if present (more robust regex)
+        const cleanJson = textOutput.replace(/```(?:json)?\n?/g, '').replace(/```/g, '').trim();
 
         let data;
         try {
             data = JSON.parse(cleanJson);
-        } catch {
-            console.error('Failed to parse AI response', textOutput);
-            return NextResponse.json({ error: 'AI generation failed' }, { status: 500 });
+        } catch (error) {
+            console.error('Failed to parse AI response. Raw output:', textOutput);
+            console.error('Parse error:', error);
+            return NextResponse.json({
+                error: 'AI generation failed to produce valid JSON',
+                details: 'The model returned an invalid response format.',
+                raw_preview: textOutput.substring(0, 500)
+            }, { status: 500 });
         }
 
         // Extract arrays for DB (backward compatibility - use first output)
