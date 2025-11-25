@@ -22,10 +22,14 @@ export const GET = async (
 
         if (route === 'login') {
             console.log("Starting interactive login...");
+            const baseUrl = process.env.APP_BASE_URL?.replace(/\/$/, "") || "";
+            const redirectUri = `${baseUrl}/api/auth/callback`;
+            console.log(`Generated redirect_uri: ${redirectUri}`);
+
             try {
                 return await auth0.startInteractiveLogin({
                     authorizationParameters: {
-                        redirect_uri: `${process.env.APP_BASE_URL}/api/auth/callback`
+                        redirect_uri: redirectUri
                     }
                 });
             } catch (loginError: any) {
