@@ -23,6 +23,8 @@ interface GeneratedResult {
         title?: string;
         content?: string;
         description?: string;
+        caption?: string;
+        media_suggestion?: string;
         hashtags?: string[];
         monetization?: string;
     }[];
@@ -335,31 +337,82 @@ export default function Dashboard() {
                                         {result.outputs.map((output, i) => (
                                             <Card key={i} className="overflow-hidden">
                                                 <CardHeader className="bg-muted/30 pb-3">
-                                                    <div className="flex items-center justify-between">
-                                                        <CardTitle className="flex items-center gap-2 capitalize">
+                                                    <div className="flex items-center justify-center relative">
+                                                        <CardTitle className="flex items-center gap-2 capitalize text-center">
                                                             {output.platform}
                                                         </CardTitle>
-                                                        <Button variant="ghost" size="sm" onClick={() => copyToClipboard(output.content || output.description || '')}>
-                                                            <Copy className="w-4 h-4 mr-2" /> Copy
-                                                        </Button>
                                                     </div>
                                                 </CardHeader>
                                                 <CardContent className="p-4 space-y-4">
                                                     {/* Title / Hook (if present) */}
                                                     {output.title && (
                                                         <div className="space-y-1">
-                                                            <Label className="text-xs text-muted-foreground uppercase">Title / Hook</Label>
-                                                            <div className="font-bold text-lg">{output.title}</div>
+                                                            <div className="flex items-center justify-between">
+                                                                <Label className="text-xs text-muted-foreground uppercase">Title / Hook</Label>
+                                                                <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => copyToClipboard(output.title || '')} title="Copy Title">
+                                                                    <Copy className="w-3 h-3" />
+                                                                </Button>
+                                                            </div>
+                                                            <div className="font-bold text-lg leading-tight">{output.title}</div>
                                                         </div>
                                                     )}
 
-                                                    {/* Main Content */}
-                                                    <div className="space-y-1">
-                                                        <Label className="text-xs text-muted-foreground uppercase">Content</Label>
-                                                        <div className="whitespace-pre-wrap text-sm bg-muted/30 p-3 rounded-md">
-                                                            {output.content || output.description}
+                                                    {/* YouTube Description */}
+                                                    {output.description && (
+                                                        <div className="space-y-1">
+                                                            <div className="flex items-center justify-between">
+                                                                <Label className="text-xs text-muted-foreground uppercase">Description</Label>
+                                                                <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => copyToClipboard(output.description || '')} title="Copy Description">
+                                                                    <Copy className="w-3 h-3" />
+                                                                </Button>
+                                                            </div>
+                                                            <div className="whitespace-pre-wrap text-sm bg-muted/30 p-3 rounded-md">
+                                                                {output.description}
+                                                            </div>
                                                         </div>
-                                                    </div>
+                                                    )}
+
+                                                    {/* Main Content / Script */}
+                                                    {output.content && (
+                                                        <div className="space-y-1">
+                                                            <div className="flex items-center justify-between">
+                                                                <Label className="text-xs text-muted-foreground uppercase">
+                                                                    {output.platform === 'tiktok' ? 'Script / Concept' : 'Content'}
+                                                                </Label>
+                                                                <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => copyToClipboard(output.content || '')} title="Copy Content">
+                                                                    <Copy className="w-3 h-3" />
+                                                                </Button>
+                                                            </div>
+                                                            <div className="whitespace-pre-wrap text-sm bg-muted/30 p-3 rounded-md">
+                                                                {output.content}
+                                                            </div>
+                                                        </div>
+                                                    )}
+
+                                                    {/* TikTok Caption */}
+                                                    {output.caption && (
+                                                        <div className="space-y-1">
+                                                            <div className="flex items-center justify-between">
+                                                                <Label className="text-xs text-muted-foreground uppercase">Caption</Label>
+                                                                <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => copyToClipboard(output.caption || '')} title="Copy Caption">
+                                                                    <Copy className="w-3 h-3" />
+                                                                </Button>
+                                                            </div>
+                                                            <div className="text-sm bg-muted/30 p-3 rounded-md">
+                                                                {output.caption}
+                                                            </div>
+                                                        </div>
+                                                    )}
+
+                                                    {/* Media Suggestion */}
+                                                    {output.media_suggestion && (
+                                                        <div className="space-y-1">
+                                                            <Label className="text-xs text-muted-foreground uppercase">Media Idea 🖼️</Label>
+                                                            <div className="text-sm italic text-muted-foreground bg-blue-50/50 dark:bg-blue-900/10 p-2 rounded-md border border-blue-100 dark:border-blue-900/20">
+                                                                {output.media_suggestion}
+                                                            </div>
+                                                        </div>
+                                                    )}
 
                                                     {/* Hashtags (if present) */}
                                                     {output.hashtags && output.hashtags.length > 0 && (

@@ -71,31 +71,34 @@ export async function POST(req: Request) {
       2. **Structure**: Generate ONE high-quality post option for EACH selected platform.
       3. **Platform Specifics**:
          - **LinkedIn**: Professional but personal, structured (hook, body, takeaway).
-         - **Twitter**: Thread-style or punchy single tweet. Include hashtags.
-         - **YouTube**: Title, Description, Tags.
-         - **Instagram**: Visual description, Caption, Hashtags.
-         - **TikTok**: Video concept/script, Caption, Hashtags.
+         - **Twitter**: Thread-style or punchy single tweet. Include \`media_suggestion\` (image/video idea).
+         - **YouTube**: \`title\`, \`description\` (detailed, SEO-optimized), \`tags\`.
+         - **Instagram**: \`content\` (caption), \`media_suggestion\` (visual description), \`hashtags\`.
+         - **TikTok**: \`title\` (hook), \`content\` (script/concept), \`caption\` (short, engaging), \`hashtags\`.
       4. **Monetization** (If YES): Provide specific upsell/downsell ideas or CTA strategies.
 
       Output MUST be valid JSON with this structure:
       {
         "outputs": [
           {
-            "platform": "linkedin",
-            "title": "Post Title/Hook",
-            "content": "Full post content...",
-            "monetization": "Optional monetization tip..."
-          },
-          {
             "platform": "twitter",
             "content": "Tweet content...",
-            "hashtags": ["#tag1", "#tag2"],
+            "media_suggestion": "A photo of...",
+            "hashtags": ["#tag1"],
+            "monetization": "..."
+          },
+          {
+            "platform": "youtube",
+            "title": "Video Title",
+            "description": "Full video description...",
+            "tags": ["tag1"],
             "monetization": "..."
           },
           {
             "platform": "tiktok",
             "title": "Video Hook",
             "content": "Script/Concept...",
+            "caption": "Short caption for the post...",
             "hashtags": ["#tag1"],
             "monetization": "..."
           }
