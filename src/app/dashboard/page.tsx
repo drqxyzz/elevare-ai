@@ -332,127 +332,120 @@ export default function Dashboard() {
                                 <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
                                     {/* Generated Posts */}
                                     {/* Generated Outputs */}
-                                    <div className="grid gap-6">
-                                        <h2 className="text-xl font-semibold">Generated Content</h2>
+                                    <div className="grid gap-8">
                                         {result.outputs.map((output, i) => (
-                                            <Card key={i} className="overflow-hidden">
-                                                <CardHeader className="bg-muted/30 py-2 px-4">
-                                                    <div className="flex items-center justify-center relative">
-                                                        <CardTitle className="text-center capitalize text-sm font-bold">
-                                                            {output.platform}
-                                                        </CardTitle>
-                                                    </div>
-                                                </CardHeader>
-                                                <CardContent className="p-3 space-y-3">
-                                                    {/* Title / Hook (if present) */}
-                                                    {output.title && (
-                                                        <div className="space-y-1">
-                                                            <div className="flex items-center justify-between">
-                                                                <Label className="text-xs text-muted-foreground uppercase">Title / Hook</Label>
-                                                                <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => copyToClipboard(output.title || '')} title="Copy Title">
-                                                                    <Copy className="w-3 h-3" />
-                                                                </Button>
+                                            <div key={i} className="space-y-2">
+                                                <h3 className="text-lg font-bold capitalize text-center">{output.platform}</h3>
+                                                <Card className="overflow-hidden border-muted">
+                                                    <CardContent className="p-4 space-y-4">
+                                                        {/* Title / Hook (if present) */}
+                                                        {output.title && (
+                                                            <div className="space-y-1">
+                                                                <div className="flex items-center justify-between">
+                                                                    <Label className="text-xs text-muted-foreground uppercase">Title / Hook</Label>
+                                                                    <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => copyToClipboard(output.title || '')} title="Copy Title">
+                                                                        <Copy className="w-3 h-3" />
+                                                                    </Button>
+                                                                </div>
+                                                                <div className="font-bold text-lg leading-tight">{output.title}</div>
                                                             </div>
-                                                            <div className="font-bold text-lg leading-tight">{output.title}</div>
-                                                        </div>
-                                                    )}
+                                                        )}
 
-                                                    {/* YouTube Description */}
-                                                    {output.description && (
-                                                        <div className="space-y-1">
-                                                            <div className="flex items-center justify-between">
-                                                                <Label className="text-xs text-muted-foreground uppercase">Description</Label>
-                                                                <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => copyToClipboard(output.description || '')} title="Copy Description">
-                                                                    <Copy className="w-3 h-3" />
-                                                                </Button>
+                                                        {/* YouTube Description */}
+                                                        {output.description && (
+                                                            <div className="space-y-1">
+                                                                <div className="flex items-center justify-between">
+                                                                    <Label className="text-xs text-muted-foreground uppercase">Description</Label>
+                                                                    <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => copyToClipboard(output.description || '')} title="Copy Description">
+                                                                        <Copy className="w-3 h-3" />
+                                                                    </Button>
+                                                                </div>
+                                                                <div className="whitespace-pre-wrap text-sm bg-muted/30 p-3 rounded-md">
+                                                                    {output.description}
+                                                                </div>
                                                             </div>
-                                                            <div className="whitespace-pre-wrap text-sm bg-muted/30 p-3 rounded-md">
-                                                                {output.description}
-                                                            </div>
-                                                        </div>
-                                                    )}
+                                                        )}
 
-                                                    {/* Main Content / Script */}
-                                                    {output.content && (
-                                                        <div className="space-y-1">
-                                                            <div className="flex items-center justify-between">
-                                                                <Label className="text-xs text-muted-foreground uppercase">
-                                                                    {output.platform === 'tiktok' ? 'Script / Concept' : 'Content'}
-                                                                </Label>
-                                                                <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => copyToClipboard(output.content || '')} title="Copy Content">
-                                                                    <Copy className="w-3 h-3" />
-                                                                </Button>
+                                                        {/* Main Content / Script */}
+                                                        {output.content && (
+                                                            <div className="space-y-1">
+                                                                <div className="flex items-center justify-between">
+                                                                    <Label className="text-xs text-muted-foreground uppercase">
+                                                                        {output.platform === 'tiktok' ? 'Script / Concept' : 'Content'}
+                                                                    </Label>
+                                                                    <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => copyToClipboard(output.content || '')} title="Copy Content">
+                                                                        <Copy className="w-3 h-3" />
+                                                                    </Button>
+                                                                </div>
+                                                                <div className="whitespace-pre-wrap text-sm bg-muted/30 p-3 rounded-md">
+                                                                    {output.content}
+                                                                </div>
                                                             </div>
-                                                            <div className="whitespace-pre-wrap text-sm bg-muted/30 p-3 rounded-md">
-                                                                {output.content}
-                                                            </div>
-                                                        </div>
-                                                    )}
+                                                        )}
 
-                                                    {/* TikTok Caption */}
-                                                    {output.caption && (
-                                                        <div className="space-y-1">
-                                                            <div className="flex items-center justify-between">
-                                                                <Label className="text-xs text-muted-foreground uppercase">Caption</Label>
-                                                                <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => copyToClipboard(output.caption || '')} title="Copy Caption">
-                                                                    <Copy className="w-3 h-3" />
-                                                                </Button>
+                                                        {/* TikTok Caption */}
+                                                        {output.caption && (
+                                                            <div className="space-y-1">
+                                                                <div className="flex items-center justify-between">
+                                                                    <Label className="text-xs text-muted-foreground uppercase">Caption</Label>
+                                                                    <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => copyToClipboard(output.caption || '')} title="Copy Caption">
+                                                                        <Copy className="w-3 h-3" />
+                                                                    </Button>
+                                                                </div>
+                                                                <div className="text-sm bg-muted/30 p-3 rounded-md">
+                                                                    {output.caption}
+                                                                </div>
                                                             </div>
-                                                            <div className="text-sm bg-muted/30 p-3 rounded-md">
-                                                                {output.caption}
-                                                            </div>
-                                                        </div>
-                                                    )}
+                                                        )}
 
-                                                    {/* Media Suggestion */}
-                                                    {output.media_suggestion && (
-                                                        <div className="space-y-1">
-                                                            <Label className="text-xs text-muted-foreground uppercase">Media Idea 🖼️</Label>
-                                                            <div className="text-sm italic text-muted-foreground bg-blue-50/50 dark:bg-blue-900/10 p-2 rounded-md border border-blue-100 dark:border-blue-900/20">
-                                                                {output.media_suggestion}
+                                                        {/* Media Suggestion */}
+                                                        {output.media_suggestion && (
+                                                            <div className="space-y-1">
+                                                                <Label className="text-xs text-muted-foreground uppercase">Media Idea 🖼️</Label>
+                                                                <div className="text-sm italic text-muted-foreground bg-blue-50/50 dark:bg-blue-900/10 p-2 rounded-md border border-blue-100 dark:border-blue-900/20">
+                                                                    {output.media_suggestion}
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                    )}
+                                                        )}
 
-                                                    {/* Hashtags (if present) */}
-                                                    {output.hashtags && output.hashtags.length > 0 && (
-                                                        <div className="space-y-1">
-                                                            <Label className="text-xs text-muted-foreground uppercase">Hashtags</Label>
-                                                            <div className="flex flex-wrap gap-1">
-                                                                {output.hashtags.map((tag, idx) => (
-                                                                    <span key={idx} className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">
-                                                                        {tag}
-                                                                    </span>
-                                                                ))}
+                                                        {/* Hashtags (if present) */}
+                                                        {output.hashtags && output.hashtags.length > 0 && (
+                                                            <div className="space-y-1">
+                                                                <Label className="text-xs text-muted-foreground uppercase">Hashtags</Label>
+                                                                <div className="flex flex-wrap gap-1">
+                                                                    {output.hashtags.map((tag, idx) => (
+                                                                        <span key={idx} className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">
+                                                                            {tag}
+                                                                        </span>
+                                                                    ))}
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                    )}
+                                                        )}
 
-                                                    {/* Monetization (if present) */}
-                                                    {output.monetization && (
-                                                        <div className="mt-4 pt-4 border-t border-dashed">
-                                                            <div className="flex items-center gap-2 mb-2 text-green-600">
-                                                                <Sparkles className="w-4 h-4" />
-                                                                <span className="font-semibold text-sm">Monetization Tip</span>
+                                                        {/* Monetization (if present) */}
+                                                        {output.monetization && (
+                                                            <div className="mt-4 pt-4 border-t border-dashed">
+                                                                <div className="flex items-center gap-2 mb-2 text-green-600">
+                                                                    <Sparkles className="w-4 h-4" />
+                                                                    <span className="font-semibold text-sm">Monetization Tip</span>
+                                                                </div>
+                                                                <p className="text-sm text-muted-foreground italic">
+                                                                    {output.monetization}
+                                                                </p>
                                                             </div>
-                                                            <p className="text-sm text-muted-foreground italic">
-                                                                {output.monetization}
-                                                            </p>
-                                                        </div>
-                                                    )}
-                                                </CardContent>
-                                            </Card>
+                                                        )}
+                                                    </CardContent>
+                                                </Card>
+                                            </div>
                                         ))}
+                            )}
                                     </div>
                                 </div>
-                            )}
-                        </div>
-                    </div>
                 </div>
-            </main>
+                    </main>
 
-            <Footer />
-            <LoginModal isOpen={showLoginModal} onOpenChange={setShowLoginModal} />
-        </div>
-    );
+                    <Footer />
+                    <LoginModal isOpen={showLoginModal} onOpenChange={setShowLoginModal} />
+                </div>
+                );
 }

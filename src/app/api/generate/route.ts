@@ -76,6 +76,10 @@ export async function POST(req: Request) {
          - **Instagram**: \`content\` (caption), \`media_suggestion\` (visual description), \`hashtags\`.
          - **TikTok**: \`title\` (hook), \`content\` (script/concept), \`caption\` (short, engaging), \`hashtags\`.
       4. **Monetization** (If YES): Provide specific upsell/downsell ideas or CTA strategies.
+      5. **NEGATIVE CONSTRAINTS (CRITICAL)**:
+         - **NO Hashtags in \`content\`, \`description\`, or \`caption\` fields.** Put them ONLY in the \`hashtags\` array.
+         - **NO Timestamps in \`content\` or \`description\`.**
+         - **NO "Title:" or "Caption:" labels inside the text fields.**
 
       Output MUST be valid JSON with this structure:
       {
