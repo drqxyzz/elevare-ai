@@ -268,7 +268,6 @@ export default function Dashboard() {
                                         <div className="flex flex-wrap gap-3 justify-center p-4 bg-muted/20 rounded-lg border border-dashed">
                                             {[
                                                 { id: 'twitter', label: 'Twitter', icon: Twitter },
-                                                { id: 'linkedin', label: 'LinkedIn', icon: Linkedin },
                                                 { id: 'instagram', label: 'Instagram', icon: Instagram },
                                                 { id: 'youtube', label: 'YouTube', icon: Youtube },
                                                 { id: 'tiktok', label: 'TikTok', icon: Video },
@@ -434,6 +433,43 @@ export default function Dashboard() {
                                                                     </div>
                                                                 </div>
                                                             )}
+
+                                                            {/* CTAs (Moved to Left) */}
+                                                            {output.cta_variations && output.cta_variations.length > 0 && (
+                                                                <div className="space-y-2 pt-2">
+                                                                    <Label className="text-xs text-muted-foreground uppercase tracking-wider">CTA Options</Label>
+                                                                    <div className="flex flex-wrap gap-2">
+                                                                        {output.cta_variations.map((cta, idx) => (
+                                                                            <Button
+                                                                                key={idx}
+                                                                                variant="outline"
+                                                                                size="sm"
+                                                                                className="text-xs h-auto py-2 px-3 whitespace-normal text-left justify-between group"
+                                                                                onClick={() => copyToClipboard(cta)}
+                                                                            >
+                                                                                <span className="line-clamp-2">{cta}</span>
+                                                                                <Copy className="w-3 h-3 opacity-0 group-hover:opacity-50 transition-opacity flex-shrink-0 ml-2" />
+                                                                            </Button>
+                                                                        ))}
+                                                                    </div>
+                                                                </div>
+                                                            )}
+
+                                                            {/* Hashtags (Moved to Left) */}
+                                                            {(output.hashtags?.length || output.tags?.length) ? (
+                                                                <div className="space-y-2">
+                                                                    <Label className="text-xs text-muted-foreground uppercase tracking-wider">
+                                                                        {output.platform === 'youtube' ? 'Tags' : 'Hashtags'}
+                                                                    </Label>
+                                                                    <div className="flex flex-wrap gap-1.5">
+                                                                        {(output.hashtags || output.tags || []).map((tag, idx) => (
+                                                                            <span key={idx} className="text-[10px] bg-primary/5 text-primary/80 px-2 py-1 rounded-full border border-primary/10">
+                                                                                {tag}
+                                                                            </span>
+                                                                        ))}
+                                                                    </div>
+                                                                </div>
+                                                            ) : null}
                                                         </div>
 
                                                         {/* Right Column: Strategy & Metadata (1/3 width) */}
@@ -475,43 +511,6 @@ export default function Dashboard() {
                                                                     </div>
                                                                 )}
                                                             </div>
-
-                                                            {/* CTAs */}
-                                                            {output.cta_variations && output.cta_variations.length > 0 && (
-                                                                <div className="space-y-2">
-                                                                    <Label className="text-xs text-muted-foreground uppercase tracking-wider">CTA Options</Label>
-                                                                    <div className="flex flex-col gap-2">
-                                                                        {output.cta_variations.map((cta, idx) => (
-                                                                            <Button
-                                                                                key={idx}
-                                                                                variant="outline"
-                                                                                size="sm"
-                                                                                className="text-xs h-auto py-2 px-3 whitespace-normal text-left justify-between group"
-                                                                                onClick={() => copyToClipboard(cta)}
-                                                                            >
-                                                                                <span className="line-clamp-2">{cta}</span>
-                                                                                <Copy className="w-3 h-3 opacity-0 group-hover:opacity-50 transition-opacity flex-shrink-0 ml-2" />
-                                                                            </Button>
-                                                                        ))}
-                                                                    </div>
-                                                                </div>
-                                                            )}
-
-                                                            {/* Hashtags */}
-                                                            {(output.hashtags?.length || output.tags?.length) ? (
-                                                                <div className="space-y-2">
-                                                                    <Label className="text-xs text-muted-foreground uppercase tracking-wider">
-                                                                        {output.platform === 'youtube' ? 'Tags' : 'Hashtags'}
-                                                                    </Label>
-                                                                    <div className="flex flex-wrap gap-1.5">
-                                                                        {(output.hashtags || output.tags || []).map((tag, idx) => (
-                                                                            <span key={idx} className="text-[10px] bg-primary/5 text-primary/80 px-2 py-1 rounded-full border border-primary/10">
-                                                                                {tag}
-                                                                            </span>
-                                                                        ))}
-                                                                    </div>
-                                                                </div>
-                                                            ) : null}
                                                         </div>
                                                     </div>
 
