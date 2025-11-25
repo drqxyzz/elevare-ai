@@ -438,14 +438,16 @@ export default function Dashboard() {
                                                 </Card>
                                             </div>
                                         ))}
-                            )}
                                     </div>
                                 </div>
+                            )}
+                        </div>
+                    </div>
                 </div>
-                    </main>
+            </main>
 
-                    <Footer />
-                    <LoginModal isOpen={showLoginModal} onOpenChange={setShowLoginModal} />
-                </div>
-                );
+            <Footer />
+            <LoginModal isOpen={showLoginModal} onOpenChange={setShowLoginModal} />
+        </div>
+    );
 }
