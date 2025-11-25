@@ -38,6 +38,8 @@ export default function AdminDashboard() {
     const [generations, setGenerations] = useState<Generation[]>([]);
     const [loading, setLoading] = useState(true);
 
+    const [isUnauthorized, setIsUnauthorized] = useState(false);
+
     useEffect(() => {
         fetchData();
     }, []);
@@ -60,6 +62,11 @@ export default function AdminDashboard() {
                     throw new Error(`Invalid response from ${name}`);
                 }
             };
+
+            if (statsRes.status === 401 || usersRes.status === 401 || genRes.status === 401) {
+                setIsUnauthorized(true);
+                return;
+            }
 
             const [statsData, usersData, genData] = await Promise.all([
                 handleResponse(statsRes, 'stats'),
