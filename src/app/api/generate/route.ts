@@ -16,8 +16,9 @@ export async function POST(req: Request) {
         const { user } = session;
         console.log(`User authenticated: ${user.sub}`);
 
-        const { url, text, purpose } = await req.json();
-        console.log(`Input received - URL: ${!!url}, Text: ${!!text}, Purpose: ${!!purpose}`);
+
+        const { url, text, purpose, platforms = ['linkedin'], monetization = false } = await req.json();
+        console.log(`Input received - URL: ${!!url}, Text: ${!!text}, Purpose: ${!!purpose}, Platforms: ${platforms}, Monetization: ${monetization}`);
 
         if (!url && !text) {
             return NextResponse.json({ error: 'URL or text is required' }, { status: 400 });
@@ -59,31 +60,39 @@ export async function POST(req: Request) {
         console.log("Preparing AI prompt...");
         const prompt = `
       You are an expert social media strategist with a modern, 2025 creator vibe.
-      Platform: LinkedIn & Twitter
+      Target Platforms: ${platforms.join(', ')}
       Topic: ${text}
       URL Context: ${scrapedContent ? `Content from URL: ${scrapedContent.substring(0, 5000)}` : 'No URL provided'}
       Purpose/Goal: ${purpose}
+      Include Monetization Suggestions: ${monetization ? 'YES' : 'NO'}
       
       STRICT OUTPUT RULES:
       1. **Tone**: Modern, human, authentic, smart. NOT corporate, robotic, or academic.
-      2. **Titles**: Short, clean, punchy. No labels like "Option 1". Pure human text.
-      3. **Headlines**: 8-12 word hooks. Modern creator style. No "Headline:" prefixes.
-      4. **Suggestions**: 
-         - A simple, clean list of 5-8 natural suggestions.
-         - Use dash-style list items (-).
-         - Each suggestion 1 sentence max.
-         - NO formal categories (Tone, Structure, Key Points, etc.).
-         - NO bold labels.
-         - Vibe: Clean, useful, friendly.
+      2. **Structure**: Generate ONE high-quality post option for EACH selected platform.
+      3. **Platform Specifics**:
+         - **LinkedIn**: Professional but personal, structured (hook, body, takeaway).
+         - **Twitter**: Thread-style or punchy single tweet. Include hashtags.
+         - **YouTube**: Title, Description, Tags.
+         - **Instagram**: Visual description, Caption, Hashtags.
+      4. **Monetization** (If YES): Provide specific upsell/downsell ideas or CTA strategies.
 
       Output MUST be valid JSON with this structure:
       {
-        "posts": [
-          { "title": "Title 1", "headline": "Headline 1" },
-          { "title": "Title 2", "headline": "Headline 2" }
-          ... (5 total)
-        ],
-        "suggestions": "markdown string of suggestions (just the dash list)"
+        "outputs": [
+          {
+            "platform": "linkedin",
+            "title": "Post Title/Hook",
+            "content": "Full post content...",
+            "monetization": "Optional monetization tip..."
+          },
+          {
+            "platform": "twitter",
+            "content": "Tweet content...",
+            "hashtags": ["#tag1", "#tag2"],
+            "monetization": "..."
+          }
+          ... (one per selected platform)
+        ]
       }
       Do not include markdown code blocks in the output, just the raw JSON string.
     `;
@@ -105,13 +114,14 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: 'AI generation failed' }, { status: 500 });
         }
 
-        // Extract arrays for DB (backward compatibility)
-        const titles = data.posts.map((p: any) => p.title);
-        const headlines = data.posts.map((p: any) => p.headline);
+        // Extract arrays for DB (backward compatibility - use first output)
+        const titles = data.outputs.map((o: any) => o.title || o.platform).filter(Boolean);
+        const headlines = data.outputs.map((o: any) => o.content.substring(0, 50) + '...').filter(Boolean);
+        const suggestions = data.outputs.map((o: any) => o.monetization).filter(Boolean).join('\n');
 
         // Save to DB
         console.log("Saving to DB...");
-        await saveGeneratedPost(dbUser.id, url || '', text || '', purpose, titles, headlines, data.suggestions);
+        await saveGeneratedPost(dbUser.id, url || '', text || '', purpose, titles, headlines, suggestions);
         await incrementUsage(dbUser.id);
         console.log("Saved successfully");
 

@@ -18,8 +18,14 @@ import { LoginModal } from '@/components/auth/LoginModal';
 import ReactMarkdown from 'react-markdown';
 
 interface GeneratedResult {
-    posts: { title: string; headline: string }[];
-    suggestions: string;
+    outputs: {
+        platform: string;
+        title?: string;
+        content?: string;
+        description?: string;
+        hashtags?: string[];
+        monetization?: string;
+    }[];
 }
 
 export default function Dashboard() {
@@ -34,6 +40,16 @@ export default function Dashboard() {
     const [url, setUrl] = useState('');
     const [text, setText] = useState('');
     const [purpose, setPurpose] = useState('');
+    const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>(['linkedin']);
+    const [showMonetization, setShowMonetization] = useState(false);
+
+    const togglePlatform = (id: string) => {
+        setSelectedPlatforms(prev =>
+            prev.includes(id)
+                ? prev.filter(p => p !== id)
+                : [...prev, id]
+        );
+    };
 
     // Load saved state on mount
     useEffect(() => {
@@ -102,7 +118,9 @@ export default function Dashboard() {
                 body: JSON.stringify({
                     url: inputType === 'url' ? url : undefined,
                     text: inputType === 'text' ? text : undefined,
-                    purpose
+                    purpose,
+                    platforms: selectedPlatforms,
+                    monetization: showMonetization
                 }),
             });
 
@@ -220,11 +238,47 @@ export default function Dashboard() {
                                         />
                                     </div>
 
+                                    <div className="space-y-3">
+                                        <Label>Target Platforms</Label>
+                                        <div className="flex flex-wrap gap-2">
+                                            {[
+                                                { id: 'linkedin', label: 'LinkedIn', icon: '💼' },
+                                                { id: 'twitter', label: 'Twitter / X', icon: '🐦' },
+                                                { id: 'youtube', label: 'YouTube', icon: '▶️' },
+                                                { id: 'instagram', label: 'Instagram', icon: '📸' }
+                                            ].map(platform => (
+                                                <Button
+                                                    key={platform.id}
+                                                    variant={selectedPlatforms.includes(platform.id) ? "default" : "outline"}
+                                                    size="sm"
+                                                    onClick={() => togglePlatform(platform.id)}
+                                                    className="gap-2"
+                                                >
+                                                    <span>{platform.icon}</span>
+                                                    {platform.label}
+                                                </Button>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    <div className="flex items-center space-x-2 py-2">
+                                        <input
+                                            type="checkbox"
+                                            id="monetization"
+                                            className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                                            checked={showMonetization}
+                                            onChange={(e) => setShowMonetization(e.target.checked)}
+                                        />
+                                        <Label htmlFor="monetization" className="cursor-pointer">
+                                            Include Monetization Suggestions? (Upsells, Downsells)
+                                        </Label>
+                                    </div>
+
                                     <div className="space-y-2">
                                         <Button
                                             className="w-full"
                                             onClick={handleGenerate}
-                                            disabled={loading || !!isLimitReached}
+                                            disabled={loading || !!isLimitReached || selectedPlatforms.length === 0}
                                         >
                                             {loading ? (
                                                 <>
@@ -276,50 +330,73 @@ export default function Dashboard() {
                             {result && (
                                 <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
                                     {/* Generated Posts */}
-                                    <div className="grid gap-4">
-                                        <h2 className="text-xl font-semibold">Generated Options</h2>
-                                        {result.posts.map((post, i) => (
-                                            <Card key={i}>
-                                                <CardContent className="p-2.5 space-y-1.5">
-                                                    <div className="space-y-0.5">
-                                                        <div className="flex items-center justify-between">
-                                                            <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">Option {i + 1}</span>
-                                                            <div className="flex gap-1">
-                                                                <Button variant="ghost" size="icon" className="h-5 w-5" onClick={() => copyToClipboard(post.title)} title="Copy Title">
-                                                                    <Copy className="w-2.5 h-2.5" />
-                                                                </Button>
-                                                            </div>
-                                                        </div>
-                                                        <h3 className="font-bold text-sm leading-tight">{post.title}</h3>
-                                                    </div>
-                                                    <div className="px-2 py-1.5 bg-muted/50 rounded-md flex items-start justify-between gap-2">
-                                                        <div>
-                                                            <p className="text-[10px] text-muted-foreground">Headline / Hook:</p>
-                                                            <p className="font-medium text-xs leading-snug">{post.headline}</p>
-                                                        </div>
-                                                        <Button variant="ghost" size="icon" className="h-5 w-5 shrink-0" onClick={() => copyToClipboard(post.headline)} title="Copy Headline">
-                                                            <Copy className="w-2.5 h-2.5" />
+                                    {/* Generated Outputs */}
+                                    <div className="grid gap-6">
+                                        <h2 className="text-xl font-semibold">Generated Content</h2>
+                                        {result.outputs.map((output, i) => (
+                                            <Card key={i} className="overflow-hidden">
+                                                <CardHeader className="bg-muted/30 pb-3">
+                                                    <div className="flex items-center justify-between">
+                                                        <CardTitle className="flex items-center gap-2 capitalize">
+                                                            {/* Simple icon mapping based on platform name */}
+                                                            {output.platform.includes('twitter') && '🐦'}
+                                                            {output.platform.includes('linkedin') && '💼'}
+                                                            {output.platform.includes('youtube') && '▶️'}
+                                                            {output.platform.includes('instagram') && '📸'}
+                                                            {output.platform}
+                                                        </CardTitle>
+                                                        <Button variant="ghost" size="sm" onClick={() => copyToClipboard(output.content || output.description || '')}>
+                                                            <Copy className="w-4 h-4 mr-2" /> Copy
                                                         </Button>
                                                     </div>
+                                                </CardHeader>
+                                                <CardContent className="p-4 space-y-4">
+                                                    {/* Title / Hook (if present) */}
+                                                    {output.title && (
+                                                        <div className="space-y-1">
+                                                            <Label className="text-xs text-muted-foreground uppercase">Title / Hook</Label>
+                                                            <div className="font-bold text-lg">{output.title}</div>
+                                                        </div>
+                                                    )}
+
+                                                    {/* Main Content */}
+                                                    <div className="space-y-1">
+                                                        <Label className="text-xs text-muted-foreground uppercase">Content</Label>
+                                                        <div className="whitespace-pre-wrap text-sm bg-muted/30 p-3 rounded-md">
+                                                            {output.content || output.description}
+                                                        </div>
+                                                    </div>
+
+                                                    {/* Hashtags (if present) */}
+                                                    {output.hashtags && output.hashtags.length > 0 && (
+                                                        <div className="space-y-1">
+                                                            <Label className="text-xs text-muted-foreground uppercase">Hashtags</Label>
+                                                            <div className="flex flex-wrap gap-1">
+                                                                {output.hashtags.map((tag, idx) => (
+                                                                    <span key={idx} className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">
+                                                                        {tag}
+                                                                    </span>
+                                                                ))}
+                                                            </div>
+                                                        </div>
+                                                    )}
+
+                                                    {/* Monetization (if present) */}
+                                                    {output.monetization && (
+                                                        <div className="mt-4 pt-4 border-t border-dashed">
+                                                            <div className="flex items-center gap-2 mb-2 text-green-600">
+                                                                <Sparkles className="w-4 h-4" />
+                                                                <span className="font-semibold text-sm">Monetization Tip</span>
+                                                            </div>
+                                                            <p className="text-sm text-muted-foreground italic">
+                                                                {output.monetization}
+                                                            </p>
+                                                        </div>
+                                                    )}
                                                 </CardContent>
                                             </Card>
                                         ))}
                                     </div>
-
-                                    {/* Suggestions */}
-                                    <Card>
-                                        <CardHeader>
-                                            <CardTitle>AI Suggestions</CardTitle>
-                                        </CardHeader>
-                                        <CardContent>
-                                            <div className="prose prose-sm dark:prose-invert max-w-none">
-                                                <ReactMarkdown>{result.suggestions}</ReactMarkdown>
-                                            </div>
-                                            <Button variant="outline" className="mt-4" onClick={() => copyToClipboard(result.suggestions)}>
-                                                <Copy className="mr-2 w-4 h-4" /> Copy Suggestions
-                                            </Button>
-                                        </CardContent>
-                                    </Card>
                                 </div>
                             )}
                         </div>
