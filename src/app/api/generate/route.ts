@@ -58,28 +58,32 @@ export async function POST(req: Request) {
         // AI Generation
         console.log("Preparing AI prompt...");
         const prompt = `
-      Act as a professional social media marketing expert.
-      I need you to generate content for a LinkedIn and Twitter post.
-      
-      Context/Input:
-      ${scrapedContent ? `Source Content:\n${scrapedContent}` : `Text:\n${text}`}
-      
-      ${url ? `Original URL: ${url}` : ''}
-      
+      You are an expert social media strategist with a modern, 2025 creator vibe.
+      Platform: LinkedIn & Twitter
+      Topic: ${text}
+      URL Context: ${scrapedContent ? `Content from URL: ${scrapedContent.substring(0, 5000)}` : 'No URL provided'}
       Purpose/Goal: ${purpose}
       
-      Please generate:
-      1. 5 Distinct Post Concepts.
-      2. For each concept, provide a catchy Title and a compelling Headline.
-      3. Suggestions for the post body (tone, structure, key points).
-      
+      STRICT OUTPUT RULES:
+      1. **Tone**: Modern, human, authentic, smart. NOT corporate, robotic, or academic.
+      2. **Titles**: Short, clean, punchy. No labels like "Option 1". Pure human text.
+      3. **Headlines**: 8-12 word hooks. Modern creator style. No "Headline:" prefixes.
+      4. **Suggestions**: 
+         - A simple, clean list of 5-8 natural suggestions.
+         - Use dash-style list items (-).
+         - Each suggestion 1 sentence max.
+         - NO formal categories (Tone, Structure, Key Points, etc.).
+         - NO bold labels.
+         - Vibe: Clean, useful, friendly.
+
       Output MUST be valid JSON with this structure:
       {
         "posts": [
           { "title": "Title 1", "headline": "Headline 1" },
           { "title": "Title 2", "headline": "Headline 2" }
+          ... (5 total)
         ],
-        "suggestions": "markdown string of suggestions"
+        "suggestions": "markdown string of suggestions (just the dash list)"
       }
       Do not include markdown code blocks in the output, just the raw JSON string.
     `;
