@@ -26,6 +26,7 @@ interface GeneratedResult {
         caption?: string;
         media_suggestion?: string;
         hashtags?: string[];
+        tags?: string[];
         monetization?: string;
     }[];
 }
@@ -408,19 +409,21 @@ export default function Dashboard() {
                                                             </div>
                                                         )}
 
-                                                        {/* Hashtags (if present) */}
-                                                        {output.hashtags && output.hashtags.length > 0 && (
+                                                        {/* Hashtags / Tags */}
+                                                        {(output.hashtags?.length || output.tags?.length) ? (
                                                             <div className="space-y-1">
-                                                                <Label className="text-xs text-muted-foreground uppercase">Hashtags</Label>
+                                                                <Label className="text-xs text-muted-foreground uppercase">
+                                                                    {output.platform === 'youtube' ? 'Tags' : 'Hashtags'}
+                                                                </Label>
                                                                 <div className="flex flex-wrap gap-1">
-                                                                    {output.hashtags.map((tag, idx) => (
+                                                                    {(output.hashtags || output.tags || []).map((tag, idx) => (
                                                                         <span key={idx} className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">
                                                                             {tag}
                                                                         </span>
                                                                     ))}
                                                                 </div>
                                                             </div>
-                                                        )}
+                                                        ) : null}
 
                                                         {/* Monetization (if present) */}
                                                         {output.monetization && (

@@ -69,14 +69,17 @@ export async function POST(req: Request) {
       STRICT OUTPUT RULES:
       1. **Tone**: Modern, human, authentic, smart. NOT corporate, robotic, or academic.
       2. **Structure**: Generate ONE high-quality post option for EACH selected platform.
-      3. **Platform Specifics**:
-         - **LinkedIn**: Professional but personal, structured (hook, body, takeaway).
-         - **Twitter**: Thread-style or punchy single tweet. Include \`media_suggestion\` (image/video idea).
-         - **YouTube**: \`title\`, \`description\` (detailed, SEO-optimized), \`tags\`.
-         - **Instagram**: \`content\` (caption), \`media_suggestion\` (visual description), \`hashtags\`.
-         - **TikTok**: \`title\` (hook), \`content\` (script/concept), \`caption\` (short, engaging), \`hashtags\`.
-      4. **Monetization** (If YES): Provide specific upsell/downsell ideas or CTA strategies.
-      5. **NEGATIVE CONSTRAINTS (CRITICAL)**:
+      3. **Universal Requirements (ALL PLATFORMS MUST HAVE THESE)**:
+         - **\`title\`**: The HOOK or Headline. (Even for Twitter/Instagram).
+         - **\`media_suggestion\`**: Visual idea, Thumbnail concept, or Video style.
+         - **\`hashtags\`**: Relevant tags (called \`tags\` for YouTube).
+      4. **Platform Specifics**:
+         - **Twitter**: \`content\` (Tweet/Thread).
+         - **YouTube**: \`description\` (Detailed, SEO).
+         - **Instagram**: \`content\` (Caption).
+         - **TikTok**: \`content\` (Script), \`caption\` (Short text).
+      5. **Monetization** (If YES): Provide specific upsell/downsell ideas or CTA strategies.
+      6. **NEGATIVE CONSTRAINTS (CRITICAL)**:
          - **NO Hashtags in \`content\`, \`description\`, or \`caption\` fields.** Put them ONLY in the \`hashtags\` array.
          - **NO Timestamps in \`content\` or \`description\`.**
          - **NO "Title:" or "Caption:" labels inside the text fields.**
@@ -86,8 +89,9 @@ export async function POST(req: Request) {
         "outputs": [
           {
             "platform": "twitter",
+            "title": "The Hook / Tweet Opener",
             "content": "Tweet content...",
-            "media_suggestion": "A photo of...",
+            "media_suggestion": "Image/GIF idea...",
             "hashtags": ["#tag1"],
             "monetization": "..."
           },
@@ -95,14 +99,16 @@ export async function POST(req: Request) {
             "platform": "youtube",
             "title": "Video Title",
             "description": "Full video description...",
+            "media_suggestion": "Thumbnail design concept...",
             "tags": ["tag1"],
             "monetization": "..."
           },
           {
             "platform": "tiktok",
-            "title": "Video Hook",
+            "title": "Video Hook (Text on Screen)",
             "content": "Script/Concept...",
-            "caption": "Short caption for the post...",
+            "caption": "Post caption...",
+            "media_suggestion": "Visual style/Camera angle...",
             "hashtags": ["#tag1"],
             "monetization": "..."
           }
