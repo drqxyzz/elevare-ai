@@ -7,7 +7,7 @@ async function isAdmin() {
     if (!session || !session.user) return false;
 
     const dbUser = await getUserUsage(session.user.sub);
-    return dbUser && dbUser.role === 'admin';
+    return dbUser && dbUser.role === 'developer';
 }
 
 export async function GET() {

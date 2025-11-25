@@ -2,7 +2,7 @@ CREATE TABLE IF NOT EXISTS users (
   id SERIAL PRIMARY KEY,
   auth0_id VARCHAR(255) UNIQUE NOT NULL,
   email VARCHAR(255) NOT NULL,
-  role VARCHAR(50) DEFAULT 'free', -- 'free' or 'paid'
+  role VARCHAR(50) DEFAULT 'free', -- 'free', 'premium', 'vip', 'developer'
   usage_count INTEGER DEFAULT 0,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );

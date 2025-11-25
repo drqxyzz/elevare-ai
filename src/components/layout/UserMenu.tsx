@@ -78,7 +78,7 @@ export function UserMenu() {
                         <span>History</span>
                     </Link>
                 </DropdownMenuItem>
-                {role === 'admin' && (
+                {role === 'developer' && (
                     <>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem asChild>

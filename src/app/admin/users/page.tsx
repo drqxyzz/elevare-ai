@@ -86,8 +86,9 @@ export default function AdminUsers() {
                                             </SelectTrigger>
                                             <SelectContent>
                                                 <SelectItem value="free">Free</SelectItem>
-                                                <SelectItem value="pro">Pro</SelectItem>
-                                                <SelectItem value="admin">Admin</SelectItem>
+                                                <SelectItem value="premium">Premium</SelectItem>
+                                                <SelectItem value="vip">VIP</SelectItem>
+                                                <SelectItem value="developer">Developer</SelectItem>
                                             </SelectContent>
                                         </Select>
                                     </TableCell>
