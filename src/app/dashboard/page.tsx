@@ -158,24 +158,7 @@ export default function Dashboard() {
                             <p className="text-muted-foreground">Create your next viral post.</p>
                         </div>
 
-                        {usage && (
-                            <Card className="w-full md:w-auto">
-                                <CardContent className="p-4 flex items-center gap-4">
-                                    <div className="text-sm">
-                                        <span className="font-medium">Plan:</span> {usage.role === 'free' ? 'Free' : 'Pro'}
-                                    </div>
-                                    <div className="h-4 w-px bg-border" />
-                                    <div className="text-sm">
-                                        <span className="font-medium">Usage:</span> {usage.limit > 1000 ? 'Unlimited' : `${usage.usage} / ${usage.limit}`}
-                                    </div>
-                                    {usage.role === 'free' && (
-                                        <Button size="sm" variant="outline" className="ml-2 h-7 text-xs">
-                                            Upgrade
-                                        </Button>
-                                    )}
-                                </CardContent>
-                            </Card>
-                        )}
+
                     </div>
 
                     {/* Limit Alert */}
@@ -251,10 +234,18 @@ export default function Dashboard() {
                                             ) : (
                                                 <>
                                                     <Sparkles className="mr-2 h-4 w-4" />
-                                                    {usage?.role === 'free' ? `Generate (${usage.usage}/${usage.limit})` : 'Generate Content'}
+                                                    Generate Content
                                                 </>
                                             )}
                                         </Button>
+                                        {usage && (
+                                            <p className="text-xs text-center text-muted-foreground">
+                                                {usage.limit > 1000
+                                                    ? 'Unlimited generations'
+                                                    : `${usage.usage} / ${usage.limit} generations used`
+                                                }
+                                            </p>
+                                        )}
                                         {!user && (
                                             <p className="text-xs text-center text-muted-foreground">
                                                 Login required to generate posts.

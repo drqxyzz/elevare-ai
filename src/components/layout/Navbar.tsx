@@ -32,29 +32,31 @@ export function Navbar() {
                         How It Works
                     </Link>
 
-                    <ModeToggle />
-
                     {!isLoading && (
                         <div className="flex items-center gap-4">
                             {user ? (
                                 <>
                                     <Link href="/dashboard">
-                                        <Button variant="ghost">Dashboard</Button>
+                                        <Button>Dashboard</Button>
                                     </Link>
                                     <UserMenu />
                                 </>
                             ) : (
                                 <>
-                                    <Link href="/api/auth/login">
+                                    <a href="/api/auth/login">
                                         <Button variant="ghost">Log In</Button>
-                                    </Link>
-                                    <Link href="/api/auth/login?screen_hint=signup">
+                                    </a>
+                                    <a href="/api/auth/login?screen_hint=signup">
                                         <Button>Get Started</Button>
-                                    </Link>
+                                    </a>
                                 </>
                             )}
                         </div>
                     )}
+
+                    <div className="pl-2 border-l ml-2">
+                        <ModeToggle />
+                    </div>
                 </div>
 
                 {/* Mobile Menu Toggle */}
@@ -79,18 +81,18 @@ export function Navbar() {
                                     <Link href="/dashboard" onClick={() => setIsMenuOpen(false)}>
                                         <Button className="w-full" variant="ghost">Dashboard</Button>
                                     </Link>
-                                    <Link href="/api/auth/logout" onClick={() => setIsMenuOpen(false)}>
+                                    <a href="/api/auth/logout" onClick={() => setIsMenuOpen(false)}>
                                         <Button className="w-full" variant="outline">Log Out</Button>
-                                    </Link>
+                                    </a>
                                 </>
                             ) : (
                                 <>
-                                    <Link href="/api/auth/login" onClick={() => setIsMenuOpen(false)}>
+                                    <a href="/api/auth/login" onClick={() => setIsMenuOpen(false)}>
                                         <Button className="w-full" variant="ghost">Log In</Button>
-                                    </Link>
-                                    <Link href="/api/auth/login?screen_hint=signup" onClick={() => setIsMenuOpen(false)}>
+                                    </a>
+                                    <a href="/api/auth/login?screen_hint=signup" onClick={() => setIsMenuOpen(false)}>
                                         <Button className="w-full">Get Started</Button>
-                                    </Link>
+                                    </a>
                                 </>
                             )}
                         </div>

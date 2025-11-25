@@ -80,10 +80,10 @@ export function UserMenu() {
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild className="text-red-600 focus:text-red-600">
-                    <Link href="/api/auth/logout" className="cursor-pointer">
+                    <a href="/api/auth/logout" className="cursor-pointer flex items-center">
                         <LogOut className="mr-2 h-4 w-4" />
                         <span>Log out</span>
-                    </Link>
+                    </a>
                 </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>
