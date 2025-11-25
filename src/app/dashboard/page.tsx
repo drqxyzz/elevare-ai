@@ -115,7 +115,7 @@ export default function Dashboard() {
                     fetchUsage();
                     return;
                 }
-                throw new Error(data.error || 'Generation failed');
+                throw new Error(data.details || data.error || 'Generation failed');
             }
 
             setResult(data);
