@@ -12,7 +12,8 @@ import {
   ClipboardList,
   Settings2,
   CheckCircle2,
-  Star
+  Star,
+  Zap
 } from 'lucide-react';
 
 export default function Home() {
@@ -173,34 +174,83 @@ export default function Home() {
                   <div className="w-3 h-3 rounded-full bg-green-500/80"></div>
                 </div>
 
-                {/* Window Content */}
-                <div className="p-6 md:p-8 space-y-6">
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-2 text-primary font-medium">
-                      <CheckCircle2 className="w-5 h-5" />
-                      <span>Generated Titles</span>
-                    </div>
-                    <div className="grid gap-3">
-                      <div className="p-3 bg-muted/30 rounded-lg border border-border/50 text-sm md:text-base">
-                        &quot;5 Ways AI is Revolutionizing Digital Marketing in 2024&quot;
-                      </div>
-                      <div className="p-3 bg-muted/30 rounded-lg border border-border/50 text-sm md:text-base">
-                        &quot;Why Your Brand Needs an AI Strategy Today&quot;
-                      </div>
-                    </div>
+                {/* Mock Dashboard Content */}
+                <div className="p-6 md:p-8 grid grid-cols-1 lg:grid-cols-2 gap-8 bg-muted/10">
+
+                  {/* Left: Input Form */}
+                  <div className="space-y-6">
+                    <Card className="border-muted/60 shadow-sm h-full">
+                      <CardHeader className="pb-4">
+                        <CardTitle className="text-lg">Content Generator</CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        <div className="space-y-2">
+                          <div className="h-4 w-20 bg-muted rounded animate-pulse"></div>
+                          <div className="h-10 w-full bg-muted/50 rounded border border-border/50 flex items-center px-3 text-sm text-muted-foreground">
+                            https://techcrunch.com/ai-marketing...
+                          </div>
+                        </div>
+                        <div className="space-y-2">
+                          <div className="h-4 w-24 bg-muted rounded animate-pulse"></div>
+                          <div className="h-32 w-full bg-muted/50 rounded border border-border/50 p-3 text-sm font-mono text-foreground/80 relative overflow-hidden">
+                            <div className="absolute inset-0 bg-gradient-to-b from-transparent to-muted/10 pointer-events-none"></div>
+                            <span className="animate-typing">
+                              Summarize this article and create a viral LinkedIn post about the future of AI in marketing. Focus on the benefits for small businesses...
+                            </span>
+                            <span className="inline-block w-1.5 h-4 bg-primary ml-1 animate-blink"></span>
+                          </div>
+                        </div>
+                        <Button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg">
+                          <Sparkles className="w-4 h-4 mr-2" /> Generate Magic
+                        </Button>
+                      </CardContent>
+                    </Card>
                   </div>
 
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-2 text-primary font-medium">
-                      <CheckCircle2 className="w-5 h-5" />
-                      <span>Post Suggestion</span>
-                    </div>
-                    <div className="p-4 bg-muted/30 rounded-lg border border-border/50 text-sm md:text-base leading-relaxed text-muted-foreground">
-                      <p className="mb-2"><span className="font-semibold text-foreground">Hook:</span> Are you still manually writing every social post? You might be falling behind.</p>
-                      <p className="mb-2"><span className="font-semibold text-foreground">Body:</span> AI isn&apos;t here to replace creativity; it&apos;s here to amplify it. By automating the brainstorming process, you can focus on strategy and engagement...</p>
-                      <p><span className="font-semibold text-foreground">CTA:</span> What&apos;s your biggest challenge with content creation? Let me know below! 👇</p>
-                    </div>
+                  {/* Right: Results */}
+                  <div className="space-y-6">
+                    <Card className="border-muted shadow-lg h-full">
+                      <CardContent className="p-6 space-y-6">
+                        {/* Mock Tabs */}
+                        <div className="grid grid-cols-3 gap-1 mb-4 bg-muted/20 p-1 rounded-lg">
+                          <div className="bg-background shadow-sm rounded-md py-1.5 text-center text-xs font-medium text-foreground">LinkedIn</div>
+                          <div className="text-center py-1.5 text-xs font-medium text-muted-foreground">Twitter</div>
+                          <div className="text-center py-1.5 text-xs font-medium text-muted-foreground">Instagram</div>
+                        </div>
+
+                        {/* Result Content */}
+                        <div className="space-y-4">
+                          <div className="space-y-2">
+                            <div className="flex items-center justify-between">
+                              <div className="h-3 w-24 bg-muted rounded"></div>
+                              <div className="h-6 w-6 bg-muted rounded-full"></div>
+                            </div>
+                            <div className="p-3 bg-muted/50 rounded-lg text-sm font-medium border border-border/50">
+                              🚀 AI isn't coming for your job, it's coming to upgrade it.
+                            </div>
+                          </div>
+
+                          <div className="space-y-2">
+                            <div className="h-3 w-16 bg-muted rounded"></div>
+                            <div className="p-4 bg-muted/30 rounded-lg border border-muted/50 text-sm leading-relaxed text-muted-foreground">
+                              <p className="mb-2">Small businesses are often overwhelmed by marketing. But with new AI tools, you can now compete with the big players.</p>
+                              <p>Imagine generating a week's worth of content in minutes. That's the power of automation.</p>
+                            </div>
+                          </div>
+
+                          <div className="flex gap-2">
+                            <div className="h-6 w-20 bg-purple-100 dark:bg-purple-900/30 rounded-full border border-purple-200 dark:border-purple-800 flex items-center justify-center text-[10px] font-bold text-purple-600 dark:text-purple-400">
+                              <Zap className="w-3 h-3 mr-1" /> 9.2/10
+                            </div>
+                            <div className="h-6 w-24 bg-pink-100 dark:bg-pink-900/30 rounded-full border border-pink-200 dark:border-pink-800 flex items-center justify-center text-[10px] font-bold text-pink-600 dark:text-pink-400">
+                              <Target className="w-3 h-3 mr-1" /> Trending
+                            </div>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
                   </div>
+
                 </div>
               </div>
             </div>

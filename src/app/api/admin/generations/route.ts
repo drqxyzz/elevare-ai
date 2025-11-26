@@ -24,6 +24,11 @@ export async function GET() {
 
     try {
         const generations = await getAllGenerations();
+        console.log('Generations fetched:', generations.length);
+        console.log('Flagged generations:', generations.filter(g => g.is_flagged).length);
+        if (generations.length > 0) {
+            console.log('Sample generation:', JSON.stringify(generations[0], null, 2));
+        }
         return NextResponse.json(generations);
     } catch (error) {
         console.error('Failed to fetch generations:', error);
