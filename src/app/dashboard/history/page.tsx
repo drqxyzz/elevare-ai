@@ -338,10 +338,7 @@ export default function HistoryPage() {
                                             })}
                                         </Tabs>
 
-                                        <div className="mt-6 pt-4 border-t">
-                                            <h3 className="font-semibold text-sm mb-2">Monetization Suggestions</h3>
-                                            <p className="text-sm text-muted-foreground whitespace-pre-wrap">{item.suggestions}</p>
-                                        </div>
+
                                     </AccordionContent>
                                 </AccordionItem>
                             );

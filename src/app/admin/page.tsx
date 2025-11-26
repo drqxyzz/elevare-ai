@@ -30,6 +30,7 @@ interface Generation {
     purpose: string;
     suggestions: string;
     is_flagged: boolean;
+    flag_reason?: string;
     created_at: string;
 }
 
@@ -195,6 +196,7 @@ export default function AdminDashboard() {
                     <TabsList className="grid w-full grid-cols-2 max-w-[400px]">
                         <TabsTrigger value="users">User Management</TabsTrigger>
                         <TabsTrigger value="generations">Content Log</TabsTrigger>
+                        <TabsTrigger value="reported">Reported Content</TabsTrigger>
                     </TabsList>
 
                     <TabsContent value="users">
