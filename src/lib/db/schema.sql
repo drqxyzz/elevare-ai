@@ -5,6 +5,8 @@ CREATE TABLE IF NOT EXISTS users (
   role VARCHAR(50) DEFAULT 'free', -- 'free', 'premium', 'vip', 'developer'
   usage_count INTEGER DEFAULT 0,
   is_suspended BOOLEAN DEFAULT FALSE,
+  stripe_customer_id VARCHAR(255),
+  subscription_status VARCHAR(50) DEFAULT 'inactive',
   created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
