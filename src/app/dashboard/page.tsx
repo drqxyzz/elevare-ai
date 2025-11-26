@@ -19,9 +19,11 @@ import { toast } from 'sonner';
 import {
     Loader2, Sparkles, Copy, AlertCircle, Check,
     Twitter, Linkedin, Youtube, Instagram, Video,
-    Zap, TrendingUp, Clock
+    Zap, TrendingUp, Clock, Rocket
 } from 'lucide-react';
 import { LoginModal } from '@/components/auth/LoginModal';
+import { UpgradeModal } from '@/components/payment/UpgradeModal';
+import Link from 'next/link';
 import ReactMarkdown from 'react-markdown';
 
 interface GeneratedResult {
@@ -48,6 +50,7 @@ export default function Dashboard() {
     const [usage, setUsage] = useState<{ usage: number; limit: number; role: string } | null>(null);
     const [result, setResult] = useState<GeneratedResult | null>(null);
     const [showLoginModal, setShowLoginModal] = useState(false);
+    const [showUpgradeModal, setShowUpgradeModal] = useState(false);
 
     // Form State
     const [inputType, setInputType] = useState<'url' | 'text'>('url');
@@ -144,9 +147,9 @@ export default function Dashboard() {
 
             if (!res.ok) {
                 if (res.status === 403 && data.limitReached) {
-                    toast.error('Free limit reached. Please upgrade.');
                     // Refresh usage to show updated state
                     fetchUsage();
+                    setShowUpgradeModal(true);
                     return;
                 }
                 throw new Error(data.details || data.error || 'Generation failed');
@@ -186,15 +189,31 @@ export default function Dashboard() {
                 <div className="max-w-7xl mx-auto space-y-8">
 
                     {/* Limit Alert */}
+                    {/* Limit Alert / Upgrade CTA */}
                     {isLimitReached && (
-                        <Alert variant="destructive">
-                            <AlertCircle className="h-4 w-4" />
-                            <AlertTitle>Limit Reached</AlertTitle>
-                            <AlertDescription>
-                                You have reached your free tier limit of {usage?.limit} generations.
-                                Please upgrade to continue creating content.
-                            </AlertDescription>
-                        </Alert>
+                        <div className="bg-gradient-to-r from-indigo-600 to-purple-700 rounded-xl p-1 shadow-lg animate-in fade-in slide-in-from-top-4 duration-500">
+                            <div className="bg-background rounded-lg p-6 flex flex-col md:flex-row items-center justify-between gap-6">
+                                <div className="flex items-center gap-4">
+                                    <div className="bg-indigo-100 dark:bg-indigo-900/30 p-3 rounded-full">
+                                        <Rocket className="w-8 h-8 text-indigo-600 dark:text-indigo-400" />
+                                    </div>
+                                    <div>
+                                        <h3 className="text-lg font-bold">You've reached your free limit!</h3>
+                                        <p className="text-muted-foreground">
+                                            Unlock unlimited generations and advanced features with Premium.
+                                        </p>
+                                    </div>
+                                </div>
+                                <div className="flex gap-3 w-full md:w-auto">
+                                    <Link href="/pricing" className="w-full md:w-auto">
+                                        <Button className="w-full md:w-auto bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-md font-bold">
+                                            <Sparkles className="w-4 h-4 mr-2" />
+                                            Upgrade Now
+                                        </Button>
+                                    </Link>
+                                </div>
+                            </div>
+                        </div>
                     )}
 
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
@@ -511,6 +530,7 @@ export default function Dashboard() {
 
             <Footer />
             <LoginModal isOpen={showLoginModal} onOpenChange={setShowLoginModal} />
+            <UpgradeModal isOpen={showUpgradeModal} onOpenChange={setShowUpgradeModal} />
         </div >
     );
 }

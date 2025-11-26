@@ -46,7 +46,12 @@ export function Navbar() {
                             {user ? (
                                 <>
                                     <Link href="/dashboard">
-                                        <Button>Dashboard</Button>
+                                        <Button variant="ghost">Dashboard</Button>
+                                    </Link>
+                                    <Link href="/pricing">
+                                        <Button className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white border-0">
+                                            Upgrade
+                                        </Button>
                                     </Link>
                                     <UserMenu />
                                 </>
