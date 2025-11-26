@@ -408,6 +408,27 @@ export default function Dashboard() {
                                                             </div>
                                                         )}
 
+                                                        {/* CTAs */}
+                                                        {output.cta_variations && output.cta_variations.length > 0 && (
+                                                            <div className="space-y-2">
+                                                                <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wider">CTA Options</h3>
+                                                                <div className="flex flex-wrap gap-2">
+                                                                    {output.cta_variations.map((cta, idx) => (
+                                                                        <Button
+                                                                            key={idx}
+                                                                            variant="outline"
+                                                                            size="sm"
+                                                                            className="text-xs h-auto py-2 px-3 whitespace-normal text-left justify-between group"
+                                                                            onClick={() => copyToClipboard(cta)}
+                                                                        >
+                                                                            <span className="line-clamp-2">{cta}</span>
+                                                                            <Copy className="w-3 h-3 opacity-0 group-hover:opacity-50 transition-opacity flex-shrink-0 ml-2" />
+                                                                        </Button>
+                                                                    ))}
+                                                                </div>
+                                                            </div>
+                                                        )}
+
                                                         {/* Hashtags */}
                                                         {(output.hashtags?.length || output.tags?.length) ? (
                                                             <div className="space-y-2">
@@ -421,6 +442,34 @@ export default function Dashboard() {
                                                                 </div>
                                                             </div>
                                                         ) : null}
+
+                                                        {/* Engagement & Trends */}
+                                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                            {output.engagement_prediction && (
+                                                                <div className="bg-purple-50 dark:bg-purple-900/10 p-3 rounded-lg border border-purple-100 dark:border-purple-900/20">
+                                                                    <div className="flex items-center gap-2 mb-1">
+                                                                        <Zap className="w-4 h-4 text-purple-600" />
+                                                                        <span className="text-xs font-bold text-purple-700 dark:text-purple-400 uppercase">Virality Score</span>
+                                                                    </div>
+                                                                    <div className="text-2xl font-black text-purple-600">{output.engagement_prediction.score}/10</div>
+                                                                    <p className="text-xs text-muted-foreground mt-1 leading-tight">
+                                                                        {output.engagement_prediction.reason}
+                                                                    </p>
+                                                                </div>
+                                                            )}
+
+                                                            {output.trend_matching && (
+                                                                <div className="bg-pink-50 dark:bg-pink-900/10 p-3 rounded-lg border border-pink-100 dark:border-pink-900/20">
+                                                                    <div className="flex items-center gap-2 mb-1">
+                                                                        <TrendingUp className="w-4 h-4 text-pink-600" />
+                                                                        <span className="text-xs font-bold text-pink-700 dark:text-pink-400 uppercase">Trend Match</span>
+                                                                    </div>
+                                                                    <p className="text-xs text-muted-foreground leading-tight">
+                                                                        {output.trend_matching}
+                                                                    </p>
+                                                                </div>
+                                                            )}
+                                                        </div>
 
                                                         {/* Media Suggestion */}
                                                         {output.media_suggestion && (

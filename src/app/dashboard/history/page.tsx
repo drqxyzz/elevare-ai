@@ -8,7 +8,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Flag, Copy, Check, ExternalLink } from 'lucide-react';
+import { Flag, Copy, Check, ExternalLink, Zap, TrendingUp, Sparkles, Clock } from 'lucide-react';
 import { toast } from 'sonner';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
@@ -194,39 +194,124 @@ export default function HistoryPage() {
                                                     <TabsContent key={platform} value={platform} className="space-y-4">
                                                         {platformData ? (
                                                             // NEW DATA DISPLAY
-                                                            <div className="space-y-4">
+                                                            <div className="space-y-6">
+                                                                {/* Header with Time */}
+                                                                {platformData.best_posting_time && (
+                                                                    <div className="flex items-center gap-2">
+                                                                        <span className="text-xs text-muted-foreground flex items-center gap-1 bg-muted/50 px-2 py-1 rounded-full border">
+                                                                            <Clock className="w-3 h-3" /> {platformData.best_posting_time}
+                                                                        </span>
+                                                                    </div>
+                                                                )}
+
                                                                 {platformData.title && (
                                                                     <div className="space-y-1">
-                                                                        <h3 className="font-semibold text-sm">Title / Hook</h3>
-                                                                        <div className="flex items-center justify-between p-3 bg-muted/50 rounded text-sm">
-                                                                            <span>{platformData.title}</span>
+                                                                        <div className="flex items-center justify-between">
+                                                                            <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wider">Title / Hook</h3>
                                                                             <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => handleCopy(platformData.title)}>
                                                                                 <Copy className="h-3 w-3" />
                                                                             </Button>
+                                                                        </div>
+                                                                        <div className="p-3 bg-muted/50 rounded-lg text-sm font-medium">
+                                                                            {platformData.title}
                                                                         </div>
                                                                     </div>
                                                                 )}
 
                                                                 {(platformData.content || platformData.description || platformData.caption) && (
                                                                     <div className="space-y-1">
-                                                                        <h3 className="font-semibold text-sm">Content</h3>
-                                                                        <div className="relative p-3 bg-muted/50 rounded text-sm whitespace-pre-wrap">
-                                                                            {platformData.content || platformData.description || platformData.caption}
-                                                                            <Button variant="ghost" size="icon" className="absolute top-2 right-2 h-6 w-6" onClick={() => handleCopy(platformData.content || platformData.description || platformData.caption)}>
+                                                                        <div className="flex items-center justify-between">
+                                                                            <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wider">Content</h3>
+                                                                            <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => handleCopy(platformData.content || platformData.description || platformData.caption)}>
                                                                                 <Copy className="h-3 w-3" />
                                                                             </Button>
+                                                                        </div>
+                                                                        <div className="whitespace-pre-wrap text-sm bg-muted/30 p-4 rounded-lg border border-muted/50 leading-relaxed">
+                                                                            {platformData.content || platformData.description || platformData.caption}
+                                                                        </div>
+                                                                    </div>
+                                                                )}
+
+                                                                {/* CTAs */}
+                                                                {platformData.cta_variations && platformData.cta_variations.length > 0 && (
+                                                                    <div className="space-y-2">
+                                                                        <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wider">CTA Options</h3>
+                                                                        <div className="flex flex-wrap gap-2">
+                                                                            {platformData.cta_variations.map((cta: string, idx: number) => (
+                                                                                <Button
+                                                                                    key={idx}
+                                                                                    variant="outline"
+                                                                                    size="sm"
+                                                                                    className="text-xs h-auto py-2 px-3 whitespace-normal text-left justify-between group"
+                                                                                    onClick={() => handleCopy(cta)}
+                                                                                >
+                                                                                    <span className="line-clamp-2">{cta}</span>
+                                                                                    <Copy className="w-3 h-3 opacity-0 group-hover:opacity-50 transition-opacity flex-shrink-0 ml-2" />
+                                                                                </Button>
+                                                                            ))}
                                                                         </div>
                                                                     </div>
                                                                 )}
 
                                                                 {platformData.hashtags && platformData.hashtags.length > 0 && (
-                                                                    <div className="space-y-1">
-                                                                        <h3 className="font-semibold text-sm">Hashtags</h3>
+                                                                    <div className="space-y-2">
+                                                                        <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wider">Hashtags</h3>
                                                                         <div className="flex flex-wrap gap-2">
                                                                             {platformData.hashtags.map((tag: string, i: number) => (
-                                                                                <Badge key={i} variant="secondary">{tag}</Badge>
+                                                                                <Badge key={i} variant="secondary" className="text-xs font-normal">{tag}</Badge>
                                                                             ))}
                                                                         </div>
+                                                                    </div>
+                                                                )}
+
+                                                                {/* Media Suggestion */}
+                                                                {platformData.media_suggestion && (
+                                                                    <div className="space-y-2">
+                                                                        <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wider">Media Idea 🖼️</h3>
+                                                                        <div className="text-sm italic text-muted-foreground bg-blue-50/50 dark:bg-blue-900/10 p-3 rounded-lg border border-blue-100 dark:border-blue-900/20">
+                                                                            {platformData.media_suggestion}
+                                                                        </div>
+                                                                    </div>
+                                                                )}
+
+                                                                {/* Engagement & Trends */}
+                                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                                    {platformData.engagement_prediction && (
+                                                                        <div className="bg-purple-50 dark:bg-purple-900/10 p-3 rounded-lg border border-purple-100 dark:border-purple-900/20">
+                                                                            <div className="flex items-center gap-2 mb-1">
+                                                                                <Zap className="w-4 h-4 text-purple-600" />
+                                                                                <span className="text-xs font-bold text-purple-700 dark:text-purple-400 uppercase">Virality Score</span>
+                                                                            </div>
+                                                                            <div className="text-2xl font-black text-purple-600">{platformData.engagement_prediction.score}/10</div>
+                                                                            <p className="text-xs text-muted-foreground mt-1 leading-tight">
+                                                                                {platformData.engagement_prediction.reason}
+                                                                            </p>
+                                                                        </div>
+                                                                    )}
+
+                                                                    {platformData.trend_matching && (
+                                                                        <div className="bg-pink-50 dark:bg-pink-900/10 p-3 rounded-lg border border-pink-100 dark:border-pink-900/20">
+                                                                            <div className="flex items-center gap-2 mb-1">
+                                                                                <TrendingUp className="w-4 h-4 text-pink-600" />
+                                                                                <span className="text-xs font-bold text-pink-700 dark:text-pink-400 uppercase">Trend Match</span>
+                                                                            </div>
+                                                                            <p className="text-xs text-muted-foreground leading-tight">
+                                                                                {platformData.trend_matching}
+                                                                            </p>
+                                                                        </div>
+                                                                    )}
+                                                                </div>
+
+                                                                {/* Monetization */}
+                                                                {platformData.monetization && (
+                                                                    <div className="mt-6 pt-4 border-t border-dashed">
+                                                                        <div className="flex items-center gap-2 mb-2 text-green-600">
+                                                                            <Sparkles className="w-4 h-4" />
+                                                                            <span className="font-semibold text-sm">Monetization Suggestion</span>
+                                                                        </div>
+                                                                        <p className="text-sm text-muted-foreground italic">
+                                                                            {platformData.monetization}
+                                                                        </p>
                                                                     </div>
                                                                 )}
                                                             </div>
