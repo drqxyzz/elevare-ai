@@ -193,7 +193,7 @@ export default function AdminDashboard() {
 
                 {/* Main Content Tabs */}
                 <Tabs defaultValue="users" className="space-y-6">
-                    <TabsList className="grid w-full grid-cols-2 max-w-[400px]">
+                    <TabsList className="grid w-full grid-cols-3 max-w-[600px]">
                         <TabsTrigger value="users">User Management</TabsTrigger>
                         <TabsTrigger value="generations">Content Log</TabsTrigger>
                         <TabsTrigger value="reported">Reported Content</TabsTrigger>
