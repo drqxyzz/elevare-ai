@@ -73,9 +73,9 @@ export default function AdminDashboard() {
     const fetchData = async () => {
         try {
             const [statsRes, usersRes, genRes] = await Promise.all([
-                fetch('/api/admin/stats'),
-                fetch('/api/admin/users'),
-                fetch('/api/admin/generations')
+                fetch('/api/admin/stats', { cache: 'no-store' }),
+                fetch('/api/admin/users', { cache: 'no-store' }),
+                fetch('/api/admin/generations', { cache: 'no-store' })
             ]);
 
             const handleResponse = async (res: Response, name: string) => {

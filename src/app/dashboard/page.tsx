@@ -349,12 +349,15 @@ export default function Dashboard() {
                             {result && (
                                 <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
                                     <Tabs defaultValue={result.outputs[0]?.platform.toLowerCase()} className="w-full">
-                                        <TabsList className="flex flex-wrap w-full h-auto gap-2 bg-transparent p-0 mb-4 justify-start">
+                                        <TabsList
+                                            className="grid w-full h-auto mb-4"
+                                            style={{ gridTemplateColumns: `repeat(${result.outputs.length}, minmax(0, 1fr))` }}
+                                        >
                                             {result.outputs.map((output) => (
                                                 <TabsTrigger
                                                     key={output.platform}
                                                     value={output.platform.toLowerCase()}
-                                                    className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground border bg-card capitalize"
+                                                    className="capitalize"
                                                 >
                                                     {output.platform}
                                                 </TabsTrigger>
