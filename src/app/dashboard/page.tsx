@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import { LoginModal } from '@/components/auth/LoginModal';
 import { UpgradeModal } from '@/components/payment/UpgradeModal';
+import { CountdownTimer } from '@/components/dashboard/CountdownTimer';
 import Link from 'next/link';
 import ReactMarkdown from 'react-markdown';
 
@@ -206,9 +207,10 @@ export default function Dashboard() {
                                     </div>
                                     <div>
                                         <h3 className="text-lg font-bold">You've reached your daily limit!</h3>
-                                        <p className="text-muted-foreground">
+                                        <p className="text-muted-foreground mb-2">
                                             Free users get 3 generations per day. Upgrade for unlimited access.
                                         </p>
+                                        <CountdownTimer />
                                     </div>
                                 </div>
                                 <div className="flex gap-3 w-full md:w-auto">
