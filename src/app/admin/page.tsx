@@ -2,9 +2,10 @@
 
 import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Users, Zap, AlertTriangle, ShieldAlert, History } from 'lucide-react';
+import { Users, Zap, AlertTriangle, ShieldAlert, History, Search } from 'lucide-react';
 import { Navbar } from '@/components/layout/Navbar';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -38,7 +39,31 @@ export default function AdminDashboard() {
     const [generations, setGenerations] = useState<Generation[]>([]);
     const [loading, setLoading] = useState(true);
 
+    // Search & Filter State
+    const [userSearch, setUserSearch] = useState('');
+    const [genSearch, setGenSearch] = useState('');
+    const [genCategory, setGenCategory] = useState('all');
+
     const [isUnauthorized, setIsUnauthorized] = useState(false);
+
+    // Filtered Data
+    const filteredUsers = users.filter(user =>
+        user.email.toLowerCase().includes(userSearch.toLowerCase()) ||
+        user.id.toString().includes(userSearch)
+    );
+
+    const uniqueCategories = Array.from(new Set(generations.map(g => g.purpose).filter(Boolean)));
+
+    const filteredGenerations = generations.filter(gen => {
+        const matchesSearch =
+            (gen.email?.toLowerCase() || '').includes(genSearch.toLowerCase()) ||
+            (gen.input_text?.toLowerCase() || '').includes(genSearch.toLowerCase()) ||
+            (gen.purpose?.toLowerCase() || '').includes(genSearch.toLowerCase());
+
+        const matchesCategory = genCategory === 'all' || gen.purpose === genCategory;
+
+        return matchesSearch && matchesCategory;
+    });
 
     useEffect(() => {
         fetchData();
@@ -178,6 +203,17 @@ export default function AdminDashboard() {
                                 <CardTitle>Registered Users</CardTitle>
                             </CardHeader>
                             <CardContent>
+                                <div className="flex items-center gap-4 mb-6">
+                                    <div className="relative flex-1 max-w-sm">
+                                        <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                                        <Input
+                                            placeholder="Search users by email or ID..."
+                                            className="pl-9"
+                                            value={userSearch}
+                                            onChange={(e) => setUserSearch(e.target.value)}
+                                        />
+                                    </div>
+                                </div>
                                 <Table>
                                     <TableHeader>
                                         <TableRow>
@@ -190,7 +226,7 @@ export default function AdminDashboard() {
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody>
-                                        {users.map((user) => (
+                                        {filteredUsers.map((user) => (
                                             <TableRow key={user.id} className={user.is_suspended ? 'bg-red-50/50 dark:bg-red-900/10' : ''}>
                                                 <TableCell className="font-mono text-xs">{user.id}</TableCell>
                                                 <TableCell>{user.email}</TableCell>
@@ -231,8 +267,30 @@ export default function AdminDashboard() {
                                 <CardTitle>Recent Generations</CardTitle>
                             </CardHeader>
                             <CardContent>
+                                <div className="flex flex-col md:flex-row gap-4 mb-6">
+                                    <div className="relative flex-1">
+                                        <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                                        <Input
+                                            placeholder="Search generations..."
+                                            className="pl-9"
+                                            value={genSearch}
+                                            onChange={(e) => setGenSearch(e.target.value)}
+                                        />
+                                    </div>
+                                    <Select value={genCategory} onValueChange={setGenCategory}>
+                                        <SelectTrigger className="w-[180px]">
+                                            <SelectValue placeholder="Category" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="all">All Categories</SelectItem>
+                                            {uniqueCategories.map(cat => (
+                                                <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                </div>
                                 <div className="space-y-4">
-                                    {generations.map((gen) => (
+                                    {filteredGenerations.map((gen) => (
                                         <div key={gen.id} className={`p-4 rounded-lg border ${gen.is_flagged ? 'border-red-200 bg-red-50 dark:bg-red-900/10 dark:border-red-900/30' : 'bg-muted/20'}`}>
                                             <div className="flex justify-between items-start mb-2">
                                                 <div className="space-y-1">
