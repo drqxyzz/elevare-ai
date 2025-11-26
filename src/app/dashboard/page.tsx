@@ -19,7 +19,7 @@ import { toast } from 'sonner';
 import {
     Loader2, Sparkles, Copy, AlertCircle, Check,
     Twitter, Linkedin, Youtube, Instagram, Video,
-    Zap, TrendingUp, Clock, Rocket
+    Zap, TrendingUp, Clock, Rocket, Lock
 } from 'lucide-react';
 import { LoginModal } from '@/components/auth/LoginModal';
 import { UpgradeModal } from '@/components/payment/UpgradeModal';
@@ -62,6 +62,13 @@ export default function Dashboard() {
     const [showMonetization, setShowMonetization] = useState(false);
 
     const togglePlatform = (id: string) => {
+        // Free user restriction: Max 1 platform
+        if (usage?.role === 'free' && !selectedPlatforms.includes(id) && selectedPlatforms.length >= 1) {
+            // If they try to add a second one, replace the existing one
+            setSelectedPlatforms([id]);
+            return;
+        }
+
         setSelectedPlatforms(prev =>
             prev.includes(id)
                 ? prev.filter(p => p !== id)
@@ -265,8 +272,15 @@ export default function Dashboard() {
                                             />
                                         </div>
                                         <div className="space-y-2">
-                                            <Label>Tone / Vibe 🎭</Label>
-                                            <Select value={tone} onValueChange={setTone}>
+                                            <Label className="flex items-center gap-2">
+                                                Tone / Vibe 🎭
+                                                {usage?.role === 'free' && <Lock className="w-3 h-3 text-muted-foreground" />}
+                                            </Label>
+                                            <Select
+                                                value={usage?.role === 'free' ? 'Professional' : tone}
+                                                onValueChange={setTone}
+                                                disabled={usage?.role === 'free'}
+                                            >
                                                 <SelectTrigger className="w-full">
                                                     <SelectValue placeholder="Select a tone" />
                                                 </SelectTrigger>
@@ -292,16 +306,20 @@ export default function Dashboard() {
                                             ].map((platform) => {
                                                 const Icon = platform.icon;
                                                 const isSelected = selectedPlatforms.includes(platform.id);
+                                                const isLocked = usage?.role === 'free' && (platform.id === 'youtube' || platform.id === 'tiktok');
+
                                                 return (
                                                     <Button
                                                         key={platform.id}
                                                         variant={isSelected ? "default" : "outline"}
                                                         size="sm"
-                                                        onClick={() => togglePlatform(platform.id)}
-                                                        className={`gap-2 transition-all ${isSelected ? 'ring-2 ring-primary ring-offset-2' : 'opacity-70 hover:opacity-100'}`}
+                                                        onClick={() => !isLocked && togglePlatform(platform.id)}
+                                                        disabled={isLocked}
+                                                        className={`gap-2 transition-all ${isSelected ? 'ring-2 ring-primary ring-offset-2' : 'opacity-70 hover:opacity-100'} ${isLocked ? 'opacity-50 cursor-not-allowed' : ''}`}
                                                     >
                                                         <Icon className="w-4 h-4" />
                                                         {platform.label}
+                                                        {isLocked && <Lock className="w-3 h-3 ml-1" />}
                                                     </Button>
                                                 );
                                             })}
@@ -466,31 +484,43 @@ export default function Dashboard() {
                                                         ) : null}
 
                                                         {/* Engagement & Trends */}
-                                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                                            {output.engagement_prediction && (
-                                                                <div className="bg-purple-50 dark:bg-purple-900/10 p-3 rounded-lg border border-purple-100 dark:border-purple-900/20">
-                                                                    <div className="flex items-center gap-2 mb-1">
-                                                                        <Zap className="w-4 h-4 text-purple-600" />
-                                                                        <span className="text-xs font-bold text-purple-700 dark:text-purple-400 uppercase">Virality Score</span>
+                                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 relative">
+                                                            {usage?.role === 'free' && (
+                                                                <div className="absolute inset-0 z-10 backdrop-blur-[2px] bg-background/50 flex items-center justify-center rounded-lg border border-dashed border-primary/20">
+                                                                    <div className="text-center p-4">
+                                                                        <Lock className="w-6 h-6 mx-auto mb-2 text-primary" />
+                                                                        <p className="text-sm font-bold mb-2">Unlock Advanced Insights</p>
+                                                                        <Link href="/pricing">
+                                                                            <Button size="sm" className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white">
+                                                                                Upgrade to Premium
+                                                                            </Button>
+                                                                        </Link>
                                                                     </div>
-                                                                    <div className="text-2xl font-black text-purple-600">{output.engagement_prediction.score}/10</div>
-                                                                    <p className="text-xs text-muted-foreground mt-1 leading-tight">
-                                                                        {output.engagement_prediction.reason}
-                                                                    </p>
                                                                 </div>
                                                             )}
 
-                                                            {output.trend_matching && (
-                                                                <div className="bg-pink-50 dark:bg-pink-900/10 p-3 rounded-lg border border-pink-100 dark:border-pink-900/20">
-                                                                    <div className="flex items-center gap-2 mb-1">
-                                                                        <TrendingUp className="w-4 h-4 text-pink-600" />
-                                                                        <span className="text-xs font-bold text-pink-700 dark:text-pink-400 uppercase">Trend Match</span>
-                                                                    </div>
-                                                                    <p className="text-xs text-muted-foreground leading-tight">
-                                                                        {output.trend_matching}
-                                                                    </p>
+                                                            <div className={`bg-purple-50 dark:bg-purple-900/10 p-3 rounded-lg border border-purple-100 dark:border-purple-900/20 ${usage?.role === 'free' ? 'blur-sm select-none' : ''}`}>
+                                                                <div className="flex items-center gap-2 mb-1">
+                                                                    <Zap className="w-4 h-4 text-purple-600" />
+                                                                    <span className="text-xs font-bold text-purple-700 dark:text-purple-400 uppercase">Virality Score</span>
                                                                 </div>
-                                                            )}
+                                                                <div className="text-2xl font-black text-purple-600">
+                                                                    {output.engagement_prediction?.score || 8.5}/10
+                                                                </div>
+                                                                <p className="text-xs text-muted-foreground mt-1 leading-tight">
+                                                                    {output.engagement_prediction?.reason || 'Upgrade to see why this post will go viral.'}
+                                                                </p>
+                                                            </div>
+
+                                                            <div className={`bg-pink-50 dark:bg-pink-900/10 p-3 rounded-lg border border-pink-100 dark:border-pink-900/20 ${usage?.role === 'free' ? 'blur-sm select-none' : ''}`}>
+                                                                <div className="flex items-center gap-2 mb-1">
+                                                                    <TrendingUp className="w-4 h-4 text-pink-600" />
+                                                                    <span className="text-xs font-bold text-pink-700 dark:text-pink-400 uppercase">Trend Match</span>
+                                                                </div>
+                                                                <p className="text-xs text-muted-foreground leading-tight">
+                                                                    {output.trend_matching || 'This post matches current trending topics in your niche.'}
+                                                                </p>
+                                                            </div>
                                                         </div>
 
                                                         {/* Media Suggestion */}

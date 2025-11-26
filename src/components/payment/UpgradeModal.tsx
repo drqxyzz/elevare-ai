@@ -54,7 +54,7 @@ export function UpgradeModal({ isOpen, onOpenChange }: UpgradeModalProps) {
                     <DialogFooter className="flex-col sm:flex-col gap-2">
                         <Link href="/pricing" className="w-full">
                             <Button className="w-full h-12 text-lg font-bold bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 shadow-lg transition-all">
-                                Upgrade Now - $29/mo
+                                Upgrade Now - $10/mo
                             </Button>
                         </Link>
                         <Button variant="ghost" onClick={() => onOpenChange(false)} className="w-full text-muted-foreground">

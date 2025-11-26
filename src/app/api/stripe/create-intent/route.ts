@@ -16,7 +16,7 @@ export async function POST(req: Request) {
         // Calculate order amount
         // In a real app, you'd look up the price from your database or Stripe Products
         const calculateOrderAmount = (items: any[]) => {
-            return 2900; // $29.00
+            return 1000; // $10.00
         };
 
         const paymentIntent = await stripe.paymentIntents.create({

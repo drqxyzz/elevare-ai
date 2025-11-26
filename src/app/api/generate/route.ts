@@ -42,80 +42,82 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: 'Limit reached', limitReached: true }, { status: 403 });
         }
 
-        // Scrape URL if provided
-        let scrapedContent = '';
+        // Enforce Free Tier Limits
+        let effectiveTone = tone;
+        let effectivePlatforms = platforms;
+        let includeInsights = true;
+
+        if (userUsage?.role === 'free') {
+            // Lock Tone
+            effectiveTone = 'Professional';
+
+            // Lock Platforms (No YouTube/TikTok) & Limit to 1
+            const allowedPlatforms = ['twitter', 'linkedin', 'instagram'];
+            effectivePlatforms = platforms.filter((p: string) => allowedPlatforms.includes(p));
+
+            if (effectivePlatforms.length > 1) {
+                effectivePlatforms = [effectivePlatforms[0]];
+            }
+
+            if (effectivePlatforms.length === 0) {
+                // Default if user tried to select only restricted platforms
+                effectivePlatforms = ['twitter'];
+            }
+
+            // Disable Insights
+            includeInsights = false;
+        }
+
+        // 4. Scrape URL if provided
+        let context = text || '';
         if (url) {
-            console.log(`Scraping URL: ${url}`);
             try {
-                const scraped = await scrapeUrl(url);
-                if (scraped) {
-                    scrapedContent = scraped;
-                    console.log("Scraping successful");
-                } else {
-                    console.warn(`Failed to scrape URL: ${url}`);
-                }
-            } catch (e) {
-                console.error(`Error scraping URL: ${url}`, e);
+                const scrapedContent = await scrapeUrl(url);
+                context = `Source URL: ${url}\n\nContent:\n${scrapedContent}\n\nUser Notes: ${text}`;
+            } catch (error) {
+                console.error('Scraping failed:', error);
+                // Fallback to just using the URL as context if scraping fails
+                context = `Source URL: ${url}\n\nUser Notes: ${text}`;
             }
         }
 
+        // 5. Construct Prompt
+        const prompt = `
+        You are an expert social media marketing strategist.
+        
+        CONTEXT:
+        ${context}
+        
+        GOAL:
+        ${purpose}
+        
+        TONE:
+        ${effectiveTone}
+        
+        PLATFORMS:
+        ${effectivePlatforms.join(', ')}
+        
+        INSTRUCTIONS:
+        Generate a JSON response with a list of outputs for the requested platforms.
+        Each output object must contain:
+        - platform: The platform name (e.g., "Twitter")
+        - title: A catchy hook or title
+        - content: The full post content (use appropriate formatting/emojis)
+        - media_suggestion: A specific idea for an image or video to attach
+        - hashtags: A list of 3-5 relevant hashtags
+        - cta_variations: A list of 2 Call-to-Action options
+        ${includeInsights ? `- engagement_prediction: Object { score: number (1-10), reason: string }
+        - trend_matching: String explaining how this fits current trends` : ''}
+        - monetization: A brief tip on how to monetize this specific post
+        
+        STRICT RULES:
+        - Return ONLY valid JSON.
+        - Do not include markdown formatting like \`\`\`json.
+        - Ensure all requested fields are present.
+        `;
         // AI Generation
         console.log("Preparing AI prompt...");
-        const prompt = `
-      You are an expert social media strategist.
-      Target Platforms: ${platforms.join(', ')}
-      Topic: ${text}
-      URL Context: ${scrapedContent ? `Content from URL: ${scrapedContent.substring(0, 5000)}` : 'No URL provided'}
-      Purpose/Goal: ${purpose}
-      Tone/Vibe: ${tone}
-      Include Monetization Suggestions: ${monetization ? 'YES' : 'NO'}
-      
-      STRICT OUTPUT RULES:
-      1. **Tone**: You MUST adopt the "${tone}" persona.
-         - If "Funny": Use humor, wit, maybe sarcasm.
-         - If "Professional": Clean, authoritative, corporate-friendly.
-         - If "Controversial": Bold, polarizing, opinionated.
-         - If "Educational": Informative, teacher-like.
-      2. **Structure**: Generate ONE high-quality post option for EACH selected platform.
-      3. **Universal Requirements (ALL PLATFORMS MUST HAVE THESE)**:
-         - **\`title\`**: The HOOK or Headline. (Even for Twitter/Instagram).
-         - **\`media_suggestion\`**: Visual idea, Thumbnail concept, or Video style.
-         - **\`hashtags\`**: Relevant tags (called \`tags\` for YouTube).
-         - **\`cta_variations\`**: Array of 3 distinct Call-To-Actions (Low, Mid, High friction).
-         - **\`trend_matching\`**: Suggest a trending audio, meme format, or visual style that fits.
-         - **\`engagement_prediction\`**: Object with \`score\` (1-10) and \`reason\` (Why it will go viral).
-         - **\`best_posting_time\`**: Suggest the optimal day/time to post this specific content.
-      4. **Platform Specifics**:
-         - **Twitter**: \`content\` (Tweet/Thread).
-         - **YouTube**: \`description\` (Detailed, SEO).
-         - **Instagram**: \`content\` (Caption).
-         - **TikTok**: \`content\` (Script), \`caption\` (Short text).
-      5. **Monetization** (If YES): Provide specific upsell/downsell ideas or CTA strategies.
-      6. **NEGATIVE CONSTRAINTS (CRITICAL)**:
-         - **NO Hashtags in \`content\`, \`description\`, or \`caption\` fields.** Put them ONLY in the \`hashtags\` array.
-         - **NO Timestamps in \`content\` or \`description\`.**
-         - **NO "Title:" or "Caption:" labels inside the text fields.**
 
-      Output MUST be valid JSON with this structure:
-      {
-        "outputs": [
-          {
-            "platform": "twitter",
-            "title": "The Hook / Tweet Opener",
-            "content": "Tweet content...",
-            "media_suggestion": "Image/GIF idea...",
-            "hashtags": ["#tag1"],
-            "cta_variations": ["Share if...", "Reply with...", "Click link..."],
-            "trend_matching": "Use the 'X' meme format...",
-            "engagement_prediction": { "score": 8, "reason": "High controversy potential..." },
-            "best_posting_time": "Tuesday at 10:00 AM EST",
-            "monetization": "..."
-          },
-          ... (one per selected platform)
-        ]
-      }
-      Do not include markdown code blocks in the output, just the raw JSON string.
-    `;
 
         console.log("Sending request to Gemini...");
         const result = await model.generateContent(prompt);
@@ -125,7 +127,7 @@ export async function POST(req: Request) {
         console.log("Raw Output Preview:", textOutput.substring(0, 200) + "...");
 
         // Clean up markdown code blocks if present (more robust regex)
-        const cleanJson = textOutput.replace(/```(?:json)?\n?/g, '').replace(/```/g, '').trim();
+        const cleanJson = textOutput.replace(/```(?: json) ?\n ? /g, '').replace(/```/g, '').trim();
 
         let data;
         try {

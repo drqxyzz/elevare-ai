@@ -65,9 +65,6 @@ export default function PricingPage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
                         {/* Plan Details */}
                         <Card className="border-primary/20 shadow-xl relative overflow-hidden">
-                            <div className="absolute top-0 right-0 bg-primary text-primary-foreground px-3 py-1 text-xs font-bold rounded-bl-lg">
-                                MOST POPULAR
-                            </div>
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2 text-2xl">
                                     <Sparkles className="w-6 h-6 text-primary" />
@@ -77,7 +74,7 @@ export default function PricingPage() {
                             </CardHeader>
                             <CardContent className="space-y-6">
                                 <div className="flex items-baseline gap-1">
-                                    <span className="text-4xl font-bold">$29</span>
+                                    <span className="text-4xl font-bold">$10</span>
                                     <span className="text-muted-foreground">/month</span>
                                 </div>
 
