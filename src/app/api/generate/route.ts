@@ -36,10 +36,28 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: 'Your account has been suspended.' }, { status: 403 });
         }
 
-        const limit = userUsage?.role === 'premium' || userUsage?.role === 'vip' || userUsage?.role === 'developer' ? 1000 : 5; // Free limit
+        // Check usage limit and suspension
+        const limit = userUsage?.role === 'premium' || userUsage?.role === 'vip' || userUsage?.role === 'developer' ? 1000 : 5; // Total limit (legacy/backup)
+        const dailyLimit = 3;
+
+        // Check Daily Limit for Free Users
+        if (userUsage?.role === 'free') {
+            const lastDate = new Date(userUsage.last_usage_date).toDateString();
+            const today = new Date().toDateString();
+
+            // If it's the same day and they've reached the limit
+            if (lastDate === today && userUsage.daily_usage_count >= dailyLimit) {
+                return NextResponse.json({
+                    error: 'Daily limit reached. Resets in 24h.',
+                    limitReached: true,
+                    isDailyLimit: true
+                }, { status: 403 });
+            }
+        }
+
         if (userUsage && userUsage.usage_count >= limit) {
             console.warn(`Limit reached for role ${dbUser.role}`);
-            return NextResponse.json({ error: 'Limit reached', limitReached: true }, { status: 403 });
+            return NextResponse.json({ error: 'Total limit reached', limitReached: true }, { status: 403 });
         }
 
         // Enforce Free Tier Limits

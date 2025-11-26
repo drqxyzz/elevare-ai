@@ -16,7 +16,7 @@ export async function getOrCreateUser(auth0Id: string, email: string) {
 export async function getUserUsage(auth0Id: string) {
     const client = await pool.connect();
     try {
-        const res = await client.query('SELECT usage_count, role, is_suspended FROM users WHERE auth0_id = $1', [auth0Id]);
+        const res = await client.query('SELECT usage_count, role, is_suspended, daily_usage_count, last_usage_date FROM users WHERE auth0_id = $1', [auth0Id]);
         return res.rows[0];
     } finally {
         client.release();
@@ -26,7 +26,18 @@ export async function getUserUsage(auth0Id: string) {
 export async function incrementUsage(userId: number) {
     const client = await pool.connect();
     try {
-        await client.query('UPDATE users SET usage_count = usage_count + 1 WHERE id = $1', [userId]);
+        // Check if we need to reset daily count
+        const userRes = await client.query('SELECT last_usage_date FROM users WHERE id = $1', [userId]);
+        const lastDate = new Date(userRes.rows[0].last_usage_date).toDateString();
+        const today = new Date().toDateString();
+
+        if (lastDate !== today) {
+            // New day, reset daily count to 1 and update date
+            await client.query('UPDATE users SET usage_count = usage_count + 1, daily_usage_count = 1, last_usage_date = CURRENT_DATE WHERE id = $1', [userId]);
+        } else {
+            // Same day, just increment
+            await client.query('UPDATE users SET usage_count = usage_count + 1, daily_usage_count = daily_usage_count + 1 WHERE id = $1', [userId]);
+        }
     } finally {
         client.release();
     }

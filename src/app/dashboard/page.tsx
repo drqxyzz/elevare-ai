@@ -47,7 +47,7 @@ interface GeneratedResult {
 export default function Dashboard() {
     const { user, isLoading } = useUser();
     const [loading, setLoading] = useState(false);
-    const [usage, setUsage] = useState<{ usage: number; limit: number; role: string } | null>(null);
+    const [usage, setUsage] = useState<{ usage: number; limit: number; role: string; daily_usage: number; last_usage_date: string } | null>(null);
     const [result, setResult] = useState<GeneratedResult | null>(null);
     const [showLoginModal, setShowLoginModal] = useState(false);
     const [showUpgradeModal, setShowUpgradeModal] = useState(false);
@@ -205,9 +205,9 @@ export default function Dashboard() {
                                         <Rocket className="w-8 h-8 text-indigo-600 dark:text-indigo-400" />
                                     </div>
                                     <div>
-                                        <h3 className="text-lg font-bold">You've reached your free limit!</h3>
+                                        <h3 className="text-lg font-bold">You've reached your daily limit!</h3>
                                         <p className="text-muted-foreground">
-                                            Unlock unlimited generations and advanced features with Premium.
+                                            Free users get 3 generations per day. Upgrade for unlimited access.
                                         </p>
                                     </div>
                                 </div>
@@ -356,13 +356,14 @@ export default function Dashboard() {
                                     </Button>
 
                                     {usage && (
-                                        <p className="text-xs text-center text-muted-foreground">
-                                            {usage.role === 'developer' || usage.role === 'vip'
-                                                ? 'Unlimited Generations'
-                                                : `${usage.usage} / ${usage.limit} generations used`
-                                            }
-                                        </p>
-                                    )}
+                                        <div className="flex items-center gap-2 text-sm text-muted-foreground bg-secondary/50 px-3 py-1 rounded-full">
+                                            <Clock className="w-4 h-4" />
+                                            <span>
+                                                {usage?.role === 'free'
+                                                    ? `Daily Uses: ${usage?.daily_usage || 0}/3`
+                                                    : 'Unlimited Access'}
+                                            </span>
+                                        </div>)}
                                 </CardContent>
                             </Card>
                         </div>
