@@ -2,8 +2,9 @@ import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 
 export async function GET() {
-    const client = await pool.connect();
+    let client;
     try {
+        client = await pool.connect();
         await client.query(`
             ALTER TABLE users 
             ADD COLUMN IF NOT EXISTS daily_usage_count INTEGER DEFAULT 0,
@@ -11,8 +12,9 @@ export async function GET() {
         `);
         return NextResponse.json({ message: 'Migration successful: Added daily usage columns' });
     } catch (error: any) {
-        return NextResponse.json({ error: error.message }, { status: 500 });
+        console.error('Migration API Error:', error);
+        return NextResponse.json({ error: error.message, stack: error.stack }, { status: 500 });
     } finally {
-        client.release();
+        if (client) client.release();
     }
 }
