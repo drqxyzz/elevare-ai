@@ -116,22 +116,32 @@ export async function POST(req: Request) {
         ${effectivePlatforms.join(', ')}
         
         INSTRUCTIONS:
-        Generate a JSON response with a list of outputs for the requested platforms.
-        Each output object must contain:
-        - platform: The platform name (e.g., "Twitter")
-        - title: A catchy hook or title
-        - content: The full post content (use appropriate formatting/emojis)
-        - media_suggestion: A specific idea for an image or video to attach
-        - hashtags: A list of 3-5 relevant hashtags
-        - cta_variations: A list of 2 Call-to-Action options
-        ${includeInsights ? `- engagement_prediction: Object { score: number (1-10), reason: string }
-        - trend_matching: String explaining how this fits current trends` : ''}
-        - monetization: A brief tip on how to monetize this specific post
+        Generate a VALID JSON response containing a list of social media posts.
         
+        The output MUST be a single JSON object with the following structure:
+        {
+          "outputs": [
+            {
+              "platform": "Platform Name",
+              "title": "Hook/Title",
+              "content": "Post Content",
+              "media_suggestion": "Visual Idea",
+              "hashtags": ["#tag1", "#tag2"],
+              "cta_variations": ["CTA 1", "CTA 2"],
+              "monetization": "Monetization Tip"
+              ${includeInsights ? `,
+              "engagement_prediction": { "score": 8, "reason": "Why it goes viral" },
+              "trend_matching": "Trend explanation"` : ''}
+            }
+          ]
+        }
+
         STRICT RULES:
-        - Return ONLY valid JSON.
-        - Do not include markdown formatting like \`\`\`json.
-        - Ensure all requested fields are present.
+        1. Return ONLY the raw JSON string.
+        2. Do NOT wrap the output in markdown code blocks (e.g., no \`\`\`json).
+        3. Do NOT include any introductory or concluding text.
+        4. Ensure all JSON keys and string values are properly quoted.
+        5. Ensure the JSON is valid and parseable.
         `;
         // AI Generation
         console.log("Preparing AI prompt...");
@@ -145,7 +155,14 @@ export async function POST(req: Request) {
         console.log("Raw Output Preview:", textOutput.substring(0, 200) + "...");
 
         // Clean up markdown code blocks if present (more robust regex)
-        const cleanJson = textOutput.replace(/```(?: json) ?\n ? /g, '').replace(/```/g, '').trim();
+        let cleanJson = textOutput.replace(/```(?: json)?\n?/g, '').replace(/```/g, '').trim();
+
+        // Find the first '{' and last '}' to extract just the JSON object if there's extra text
+        const firstOpen = cleanJson.indexOf('{');
+        const lastClose = cleanJson.lastIndexOf('}');
+        if (firstOpen !== -1 && lastClose !== -1) {
+            cleanJson = cleanJson.substring(firstOpen, lastClose + 1);
+        }
 
         let data;
         try {
