@@ -97,7 +97,13 @@ export default function Dashboard() {
             const res = await fetch('/api/user/usage');
             if (res.ok) {
                 const data = await res.json();
-                setUsage(data);
+                setUsage({
+                    usage: data.usage_count,
+                    limit: data.limit,
+                    role: data.role,
+                    daily_usage: data.daily_usage_count || 0,
+                    last_usage_date: data.last_usage_date
+                });
             }
         } catch (error) {
             console.error('Failed to fetch usage', error);
