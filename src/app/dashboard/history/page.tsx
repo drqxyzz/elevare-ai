@@ -103,6 +103,8 @@ export default function HistoryPage() {
                         {history.map((item) => {
                             // Parse response_json if available
                             let structuredData: any = null;
+                            let availablePlatforms: string[] = [];
+
                             if ((item as any).response_json) {
                                 try {
                                     structuredData = (item as any).response_json;
@@ -110,10 +112,23 @@ export default function HistoryPage() {
                                     if (typeof structuredData === 'string') {
                                         structuredData = JSON.parse(structuredData);
                                     }
+                                    if (structuredData?.outputs) {
+                                        availablePlatforms = structuredData.outputs.map((o: any) => o.platform.toLowerCase());
+                                    }
                                 } catch (e) {
                                     console.error("Error parsing response_json", e);
                                 }
                             }
+
+                            // Fallback for legacy data (excluding LinkedIn as requested)
+                            if (availablePlatforms.length === 0) {
+                                availablePlatforms = ['youtube', 'tiktok', 'instagram', 'twitter'];
+                            }
+
+                            // Filter out LinkedIn if it somehow got in (user requested removal)
+                            availablePlatforms = availablePlatforms.filter(p => p !== 'linkedin');
+
+                            const defaultTab = availablePlatforms[0] || 'youtube';
 
                             return (
                                 <AccordionItem key={item.id} value={`item-${item.id}`} className="border rounded-lg bg-card px-4">
@@ -134,14 +149,14 @@ export default function HistoryPage() {
                                         </div>
                                     </AccordionTrigger>
                                     <AccordionContent className="pt-4 pb-6 border-t">
-                                        <Tabs defaultValue="youtube" className="w-full">
+                                        <Tabs defaultValue={defaultTab} className="w-full">
                                             <div className="flex items-center justify-between mb-4">
                                                 <TabsList>
-                                                    <TabsTrigger value="youtube">YouTube</TabsTrigger>
-                                                    <TabsTrigger value="tiktok">TikTok</TabsTrigger>
-                                                    <TabsTrigger value="instagram">Instagram</TabsTrigger>
-                                                    <TabsTrigger value="linkedin">LinkedIn</TabsTrigger>
-                                                    <TabsTrigger value="twitter">Twitter</TabsTrigger>
+                                                    {availablePlatforms.map(p => (
+                                                        <TabsTrigger key={p} value={p} className="capitalize">
+                                                            {p}
+                                                        </TabsTrigger>
+                                                    ))}
                                                 </TabsList>
 
                                                 <Dialog>
@@ -171,7 +186,7 @@ export default function HistoryPage() {
                                             </div>
 
                                             {/* Content Display Logic */}
-                                            {['youtube', 'tiktok', 'instagram', 'linkedin', 'twitter'].map((platform) => {
+                                            {availablePlatforms.map((platform) => {
                                                 // Find data for this platform
                                                 const platformData = structuredData?.outputs?.find((o: any) => o.platform.toLowerCase() === platform);
 
@@ -216,9 +231,9 @@ export default function HistoryPage() {
                                                                 )}
                                                             </div>
                                                         ) : (
-                                                            // FALLBACK FOR OLD DATA (or missing platform)
+                                                            // FALLBACK FOR OLD DATA
                                                             <div className="space-y-2">
-                                                                <p className="text-xs text-muted-foreground italic mb-2">Legacy data view (Platform details may be mixed)</p>
+                                                                <p className="text-xs text-muted-foreground italic mb-2">Legacy data view</p>
                                                                 {platform === 'youtube' && item.titles?.map((t, i) => (
                                                                     <div key={i} className="flex items-center justify-between p-2 bg-muted/50 rounded text-sm">
                                                                         <span>{t}</span>
@@ -239,7 +254,7 @@ export default function HistoryPage() {
                                         </Tabs>
 
                                         <div className="mt-6 pt-4 border-t">
-                                            <h3 className="font-semibold text-sm mb-2">AI Suggestions</h3>
+                                            <h3 className="font-semibold text-sm mb-2">Monetization Suggestions</h3>
                                             <p className="text-sm text-muted-foreground whitespace-pre-wrap">{item.suggestions}</p>
                                         </div>
                                     </AccordionContent>
