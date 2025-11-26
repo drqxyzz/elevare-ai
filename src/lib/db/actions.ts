@@ -32,12 +32,12 @@ export async function incrementUsage(userId: number) {
     }
 }
 
-export async function saveGeneratedPost(userId: number, inputUrl: string, inputText: string, purpose: string, titles: string[], headlines: string[], suggestions: string) {
+export async function saveGeneratedPost(userId: number, inputUrl: string, inputText: string, purpose: string, titles: string[], headlines: string[], suggestions: string, responseJson: any = null) {
     const client = await pool.connect();
     try {
         await client.query(
-            'INSERT INTO generated_posts (user_id, input_url, input_text, purpose, titles, headlines, suggestions) VALUES ($1, $2, $3, $4, $5, $6, $7)',
-            [userId, inputUrl, inputText, purpose, JSON.stringify(titles), JSON.stringify(headlines), suggestions]
+            'INSERT INTO generated_posts (user_id, input_url, input_text, purpose, titles, headlines, suggestions, response_json) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)',
+            [userId, inputUrl, inputText, purpose, JSON.stringify(titles), JSON.stringify(headlines), suggestions, responseJson ? JSON.stringify(responseJson) : null]
         );
     } finally {
         client.release();

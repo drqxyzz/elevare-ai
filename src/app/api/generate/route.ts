@@ -147,7 +147,7 @@ export async function POST(req: Request) {
 
         // Save to DB
         console.log("Saving to DB...");
-        await saveGeneratedPost(dbUser.id, url || '', text || '', purpose, titles, headlines, suggestions);
+        await saveGeneratedPost(dbUser.id, url || '', text || '', purpose, titles, headlines, suggestions, data);
         await incrementUsage(dbUser.id);
         console.log("Saved successfully");
 
