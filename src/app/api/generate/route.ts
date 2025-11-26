@@ -117,6 +117,7 @@ export async function POST(req: Request) {
         
         INSTRUCTIONS:
         Generate a VALID JSON response containing a list of social media posts.
+        Generate EXACTLY ONE post for each requested platform.
         
         The output MUST be a single JSON object with the following structure:
         {
